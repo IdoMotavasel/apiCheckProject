@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface AdminType extends Document {
     _id: mongoose.Types.ObjectId;
@@ -9,7 +9,7 @@ export interface AdminType extends Document {
     usersGroup: mongoose.Types.ObjectId[];
     }
 
-const AdminSchema = new Schema<AdminType>(
+const AdminSchema: Schema<AdminType> = new Schema<AdminType>(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -19,6 +19,6 @@ const AdminSchema = new Schema<AdminType>(
   },
 );
 
-const AdminModel = mongoose.model<AdminType>("Admin", AdminSchema);
+const AdminModel: Model<AdminType> = mongoose.model<AdminType>("Admin", AdminSchema);
 
 export default AdminModel;

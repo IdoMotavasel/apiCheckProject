@@ -1,0 +1,48 @@
+.container {
+    width: 100%;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    height: calc(100vh - 20vh);
+    margin-top: 20vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  
+  .searchBar {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+    font-size: 16px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .removeButton {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+  

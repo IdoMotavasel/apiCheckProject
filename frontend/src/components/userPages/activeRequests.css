@@ -1,0 +1,48 @@
+.requests-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px; /* Optional padding around the container */
+    padding-top: 20vh; /* Makes space for the navbar */
+}
+
+/* Table container that takes 80vh */
+.table-container {
+    height: 80vh;
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+/* Styling the table */
+.requests-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.requests-table th, .requests-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #cccccc;
+}
+
+.requests-table th {
+    background-color: #cccccc;
+}
+
+.number-column {
+    background-color: #cccccc;
+}
+
+.dark-row {
+    background-color: #2f2f2f; /* Dark gray */
+    color: #fff; /* White text */
+}
+
+.light-row {
+    background-color: #cccccc; /* Light gray */
+    color: #000; /* Black text */
+}
+
+/* Optional: Add hover effect to rows */
+.requests-table tr:hover {
+    background-color: #cccccc;
+}

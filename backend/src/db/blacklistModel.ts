@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose,{Schema, Model} from 'mongoose';
 
-interface IBlacklist extends Document {
+export interface IBlacklist extends Document {
     token: string;
 }
 
-const blacklistSchema = new mongoose.Schema<IBlacklist>(
+const blacklistSchema: Schema<IBlacklist>= new mongoose.Schema<IBlacklist>(
     {
         token: {type: String, required:true},
     },
@@ -13,4 +13,4 @@ const blacklistSchema = new mongoose.Schema<IBlacklist>(
     }
 );
 
-export const Blacklist = mongoose.model<IBlacklist>('Blacklist',blacklistSchema);
+export const Blacklist: Model<IBlacklist> = mongoose.model<IBlacklist>('Blacklist',blacklistSchema);

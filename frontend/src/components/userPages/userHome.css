@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    padding:0;
+    height: 100%;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: grey;
+    color: #00ff00;
+    overflow: hidden;
+  }
+  
+  .user-home main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Adjust for navbar height */
+    text-align: center;
+  }
+  
+  .user-home h1 {
+    font-size: 2.5rem;
+    margin: 0.5rem 0;
+    text-shadow: 0px 0px 8px #00ff00;
+  }
+  
+  .user-home p {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }

@@ -1,4 +1,4 @@
-import mongoose, {Document} from "mongoose";
+import mongoose, {Document, Schema, Model} from "mongoose";
 
 export interface ApiCodeType extends Document{
     _id: mongoose.Types.ObjectId;
@@ -7,11 +7,15 @@ export interface ApiCodeType extends Document{
     userId: mongoose.Types.ObjectId;
 }
 
-const ApiCodesSchema = new mongoose.Schema<ApiCodeType>({
+const ApiCodesSchema:Schema<ApiCodeType> = new mongoose.Schema<ApiCodeType>({
     description: { type: String, required: true},
     zippedApi: { type: Buffer, required: true},
     userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User'},
-});
+    },
+    {
+        timestamps: true
+    }
+);
 
-const apiCode = mongoose.model<ApiCodeType>('ApiCode',ApiCodesSchema);
+const apiCode:Model<ApiCodeType>= mongoose.model<ApiCodeType>('ApiCode',ApiCodesSchema);
 export default apiCode;

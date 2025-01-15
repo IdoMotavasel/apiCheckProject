@@ -15,7 +15,10 @@ const app: Express = express();
 app.use(compression());
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials:true, // Allow cookies and other credentials
+}));
 
 // Middleware to parse incoming requests with JSON payloads
 app.use(express.json());
@@ -23,12 +26,12 @@ app.use(express.json());
 // Middleware to parse incoming requests with URL-encoded payloads
 app.use(express.urlencoded({ extended: true }));
 
+//Connection to db
 connectToDB();
 
-// Define the port (from environment variable or default to 3000)
-const PORT: string = process.env.PORT || '3000';
+const PORT: string = process.env.PORT!;
 
-// Start the server
+// Starting the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

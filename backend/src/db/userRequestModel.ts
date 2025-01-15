@@ -1,21 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose, {Model,Schema} from 'mongoose';
 
-interface userRequestType extends Document {
+export interface UserRequestType extends Document {
     _id: mongoose.Types.ObjectId;
+    isValid: boolean;
+    username: string;
     apiCodeId: mongoose.Types.ObjectId;
-    status: 0 | 1 ;
+    adminsNotes?: string;
+    adminsDecision?: string;
 }
 
-const userRequestSchema = new mongoose.Schema<userRequestType>(
+const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserRequestType>(
     {
-        apiCodeId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ApiCode'},
-        status: { type: Number, required: true, enum: [0,1]},
+        isValid: { type: Boolean, required: true },
+        username: { type: String, required: true },
+        apiCodeId: { type: Schema.Types.ObjectId, ref: 'ApiCode', required: true },
+        adminsNotes: { type: String, default: null },
+        adminsDecision: { type: String, default: null },
     },
     {
         timestamps: true,
     }
 );
 
-export const userRequest = mongoose.model<userRequestType>('userRequest',userRequestSchema);
-
-//לבדוק לגבי טבלה של הערות של אדמין למשתמש תחתיו
+export const UserRequest: Model<UserRequestType> = mongoose.model<UserRequestType>('UserRequest',UserRequestSchema);
