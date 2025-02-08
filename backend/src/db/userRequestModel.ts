@@ -7,6 +7,7 @@ export interface UserRequestType extends Document {
     apiCodeId: mongoose.Types.ObjectId;
     adminsNotes?: string;
     adminsDecision?: string;
+    status: "waiting" | "checked";
 }
 
 const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserRequestType>(
@@ -16,6 +17,7 @@ const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserReques
         apiCodeId: { type: Schema.Types.ObjectId, ref: 'ApiCode', required: true },
         adminsNotes: { type: String, default: null },
         adminsDecision: { type: String, default: null },
+        status: { type: String, required: true, enum: ["waiting", "checked"], default: "waiting" },
     },
     {
         timestamps: true,

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useTokenProperty, useToken } from "../../utils/decodingUtils";
 import "./groupData.css";
 import { User } from "../types/groupDataTypes";
+import TokenWrapper from "../routeHelpers/TokenWrapper";
 
 const GroupData: React.FC = () => {
   const [groupCode, setGroupCode] = useState<string>("");
@@ -20,7 +21,7 @@ const GroupData: React.FC = () => {
       try {
         if(userId){
           const response = await axios.get(
-            `http://localhost:3000/getGroupData:${userId}`,
+            `http://localhost:3000/admin/${userId}/group-data`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }
@@ -37,7 +38,7 @@ const GroupData: React.FC = () => {
     };
 
     fetchGroupData();
-  },);
+  },[userId, accessToken]);
 
   const handleRemoveUser = async (username: string): Promise<void> => {
     try {
@@ -57,50 +58,52 @@ const GroupData: React.FC = () => {
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
     return (
-      <div className="container">
-      <h1>Group Code: {groupCode || "Loading..."}</h1>
-      {loading ? (
-        <p>Loading group data...</p>
-      ) : error ? (
-        <p className="error">{error}</p>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="searchBar"
-          />
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Valid Codes Submitted</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.username}>
-                  <td>{user.username}</td>
-                  <td>{user.validCodes}</td>
-                  <td>
-                    <button
-                      onClick={() => handleRemoveUser(user.username)}
-                      className="removeButton"
-                    >
-                      Remove User
-                    </button>
-                  </td>
+      <TokenWrapper>
+        <div className="main-container">
+        <h1 className="group-data-group-code">Group Code: {groupCode || "Loading..."}</h1>
+        {loading ? (
+          <p>Loading group data...</p>
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : (
+          <>
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="searchBar"
+            />
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Valid Codes Submitted</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {filteredUsers.length === 0 && <p>No users found.</p>}
-        </>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.username}>
+                    <td>{user.username}</td>
+                    <td>{user.validCodes}</td>
+                    <td>
+                      <button
+                        onClick={() => handleRemoveUser(user.username)}
+                        className="removeButton"
+                      >
+                        Remove User
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {filteredUsers.length === 0 && <p>No users found.</p>}
+          </>
+        )}
+      </div>
+    </TokenWrapper>
     );
   };
   

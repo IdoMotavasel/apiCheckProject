@@ -7,6 +7,7 @@ import { LOGIN_URL } from '../../urls';
 import { clearTokens } from '../../store/authSlice';
 import { jwtDecode } from 'jwt-decode';
 import { AppDispatch } from '../../store/store';
+import "./login.css";
 
 export default function Login():JSX.Element {
     const dispatch: AppDispatch = useDispatch();
@@ -49,27 +50,29 @@ export default function Login():JSX.Element {
     };
 
     return (
-    <div>
-        <h1>Login</h1>
-        <div>
-            <div>
+    <div className = "login-container">
+        <h1 className="login-title">Login</h1>
+        <div className="login-form">
+            <div className="input-container">
                 <input
                     type="text"
                     placeholder="Enter username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    className="login-input"
                 />
                 <input
                     type="password"
                     placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="login-input"
                 />
-                {errorFeed}
+                <div className="error-message">{errorFeed}</div>
             </div>
             <div className="authentication-buttons">
-                <button onClick={handleLogin}>Login</button>
-                <button onClick={handleRegisterRedirect}>Don't have an account? </button>
+                <button onClick={handleLogin} className="login-button">Login</button>
+                <button onClick={handleRegisterRedirect} className="register-redirect-button">Don't have an account? </button>
             </div>
         </div>
     </div>

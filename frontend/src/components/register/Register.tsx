@@ -2,6 +2,7 @@ import { useState } from "react";
 import { REGISTER_URL } from "../../urls";
 import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import "./register.css";
 
 export default function Register(): JSX.Element {
     const [errorFeed, setErrorFeed] = useState<string>("");
@@ -46,28 +47,30 @@ export default function Register(): JSX.Element {
     };
 
     return (
-        <div>
-            <h1>Register</h1>
-            <form>
-                <div>
+        <div className="register-container">
+            <h1 className="register-title">Register</h1>
+            <form className="register-form">
+                <div className="input-container">
                     <label>Username:</label>
                     <input
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Enter username"
+                        className="register-input"
                     />
                 </div>
-                <div>
+                <div className="input-container">
                     <label>Password:</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter password"
+                        className="register-input"
                     />
                 </div>
-                <div>
+                <div className="role-selection">
                     <label>
                     <input
                         type="radio"
@@ -75,6 +78,7 @@ export default function Register(): JSX.Element {
                         value="user"
                         checked={role === "user"}
                         onChange={() => setRole("user")}
+                        className="role-radio"
                     />
                     User
                     </label>
@@ -85,6 +89,7 @@ export default function Register(): JSX.Element {
                         value="admin"
                         checked={role === "admin"}
                         onChange={() => setRole("admin")}
+                        className="role-radio"
                     />
                     Admin
                     </label>
@@ -92,33 +97,34 @@ export default function Register(): JSX.Element {
 
                 {/* Conditional Inputs */}
                 {role === "user" && (
-                <div>
+                <div className="input-container">
                     <label>Admin Group Code:</label>
                     <input
                     type="text"
                     value={adminGroupCode}
                     onChange={(e) => setAdminGroupCode(e.target.value)}
                     placeholder="Enter admin group code"
+                    className="register-input"
                     />
                 </div>
                 )}
 
                 {role === "admin" && (
-                <div>
+                <div className="input-container">
                     <label>Authorization Code:</label>
                     <input
                     type="text"
                     value={authorizationCode}
                     onChange={(e) => setAuthorizationCode(e.target.value)}
                     placeholder="Enter authorization code"
+                    className="register-input"
                     />
                 </div>
                 )}
 
-                <button onClick={handleRegister}>Register</button>
-                <button onClick={handleLoginRedirect}>Back to login</button>
-                <div>{errorFeed}</div>
-                <div>{role}</div>
+                <button onClick={handleRegister} className="register-button">Register</button>
+                <button onClick={handleLoginRedirect} className="login-redirect-button">Back to login</button>
+                <div className="error-message">{errorFeed}</div>
             </form>
         </div>
     );

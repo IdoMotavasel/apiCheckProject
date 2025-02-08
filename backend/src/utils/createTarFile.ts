@@ -1,19 +1,20 @@
 import {create} from 'tar';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { filePathsType } from '../types/utilsTypes';
 
 export const createTarFile = async (files: {name: string; content: string}[]): Promise<Buffer> => {
-    const tempDir = path.join(process.cwd(), 'temp');
+    const tempDir: string = path.join(process.cwd(), 'temp');
     await fs.mkdir(tempDir, { recursive: true});
 
-    const filePaths = files.map(file => ({
+    const filePaths: filePathsType[] = files.map(file => ({
         fullPath: path.join(tempDir, file.name),
         content: file.content,
     }));
 
     await Promise.all(filePaths.map(file => fs.writeFile(file.fullPath, file.content)));
     
-    const tarFilePath = path.join(tempDir, 'temp-api-code.tar.gz');
+    const tarFilePath: string = path.join(tempDir, 'temp-api-code.tar.gz');
     await create(
         {
             gzip: true,

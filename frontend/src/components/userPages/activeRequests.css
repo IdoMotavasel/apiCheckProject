@@ -1,18 +1,18 @@
-.requests-container {
+/*.requests-container {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 0 20px; /* Optional padding around the container */
-    padding-top: 20vh; /* Makes space for the navbar */
+    padding: 0 20px; 
+    padding-top: 20vh; 
 }
 
-/* Table container that takes 80vh */
+
 .table-container {
     height: 80vh;
-    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-y: auto; 
 }
 
-/* Styling the table */
+
 .requests-table {
     width: 100%;
     border-collapse: collapse;
@@ -33,16 +33,15 @@
 }
 
 .dark-row {
-    background-color: #2f2f2f; /* Dark gray */
-    color: #fff; /* White text */
+    background-color: #2f2f2f; 
+    color: #fff; 
 }
 
 .light-row {
-    background-color: #cccccc; /* Light gray */
-    color: #000; /* Black text */
+    background-color: #cccccc; 
+    color: #000; 
 }
 
-/* Optional: Add hover effect to rows */
 .requests-table tr:hover {
     background-color: #cccccc;
-}
+}*/

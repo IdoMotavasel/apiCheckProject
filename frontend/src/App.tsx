@@ -11,7 +11,6 @@ import AdminHome from './components/adminPages/AdminHome';
 import WaitingRequests from './components/adminPages/WaitingRequests';
 import RequestHistory from './/components/adminPages/RequestHistory';
 import GroupData from './components/adminPages/GroupData';
-import ManageUsers from './components/adminPages/ManageUsers';
 
 import UserHome from './components/userPages/UserHome';
 import ChecksHistory from './components/userPages/ChecksHistory';
@@ -33,7 +32,6 @@ const App = (): JSX.Element => {
     { name: 'Waiting Requests', href: '/admin/waiting-requests' },
     { name: 'Request History', href: '/admin/request-history' },
     { name: 'Group Data', href: '/admin/group-data' },
-    { name: 'Manage Users', href: '/admin/manage-users' },
   ];
 
   // User links
@@ -64,7 +62,6 @@ const App = (): JSX.Element => {
                   <Route path="/waiting-requests" element={<WaitingRequests />} />
                   <Route path="/request-history" element={<RequestHistory />} />
                   <Route path="/group-data" element={<GroupData />} />
-                  <Route path="/manage-users" element={<ManageUsers />} />
                 </Routes>
               </ProtectedRoute>
             </TokenWrapper>

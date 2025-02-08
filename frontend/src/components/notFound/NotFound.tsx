@@ -3,3 +3,5 @@ const NotFound = (): JSX.Element => {
   };
   
   export default NotFound;
+
+  //right now, didnt use.

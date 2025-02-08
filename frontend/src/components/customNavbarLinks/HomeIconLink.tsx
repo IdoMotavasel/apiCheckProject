@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import apiIcon from '../../../assets/api-icon.png';
 import { useTokenProperty, useToken } from "../../utils/decodingUtils";
+import TokenWrapper from '../routeHelpers/TokenWrapper';
 
 const HomeIconLink: React.FC = () => {
     const accessToken: string =  useToken("access")!;
@@ -15,9 +16,11 @@ const HomeIconLink: React.FC = () => {
     const homePath: string = getHomePath();
 
     return(
-        <Link to={homePath} className="home-link">
-            <img src={apiIcon} alt="Home" className="home-icon" />
-        </Link>
+        <TokenWrapper>
+            <Link to={homePath} className="home-link">
+                <img src={apiIcon} alt="Home" className="home-icon" />
+            </Link>
+        </TokenWrapper>
     );
 };
 

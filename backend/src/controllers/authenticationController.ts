@@ -9,6 +9,8 @@ import { generateAccessToken, generateRefreshToken } from "../utils/tokenGenerat
 import { verifyRefreshToken } from "../utils/tokenVerification";
 import jwt from 'jsonwebtoken';
 
+//------------------ ADMIN & USER CONTROLLER----------------
+
 const adminAuthorizationSecret: string = process.env.ADMIN_AUTHORIZATION_SECRET!;
 
 export const login = async ( req: Request<{},{},LoginRequestBody>, res: Response): Promise<void> => {

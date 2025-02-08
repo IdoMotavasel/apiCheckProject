@@ -7,6 +7,8 @@ import { checkApiRequestBody} from '../types/checkApiTypes';
 import { Params } from '../types/params';
 import { UserType } from '../db/userModel';
 
+//------------------ USER CONTROLLER----------------
+
 export const checkApi = async (req: Request<Params,{},checkApiRequestBody>, res: Response):Promise<void> => {
     const { description, dockerfileCode, packageJsonCode, apiCode } = req.body;
     console.log('entered Check api');

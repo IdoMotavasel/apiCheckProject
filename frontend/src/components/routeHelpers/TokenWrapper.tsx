@@ -12,6 +12,7 @@ const TokenWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const dispatch: AppDispatch = useDispatch();
     const { accessToken, refreshToken } = useSelector((state: RootState) => state.auth);
     const [loading, setLoading] = useState<boolean>(true);
+    const [key, setKey] = useState<number>(0);
 
     useEffect(() => {
         const checkTokens = async (): Promise<void> => {
@@ -50,6 +51,7 @@ const TokenWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                             console.log('success');
                             const newAccessToken = refreshResponse.data.accessToken;
                             dispatch(setTokens({ accessToken: newAccessToken, refreshToken }));
+                            setKey(prevKey => prevKey + 1);
                         } else {
                             console.log('not success');
                             dispatch(clearTokens());
@@ -75,7 +77,7 @@ const TokenWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         return <div>Loading...</div>; 
     }
 
-    return <>{children}</>;
+    return <div key={key}>{children}</div>;
 };
 
 export default TokenWrapper;
