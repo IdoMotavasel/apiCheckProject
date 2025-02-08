@@ -7,6 +7,8 @@ import { handleError } from '../utils/errorHandler';
 import { CreateTarRequestBody } from '../types/tarControllerTypes';
 import { Params } from "../types/params";
 
+//--------------- RIGHT NOW USELESS, MOVED TO UTILS ------------
+
 export const createFiles = (dockerfile: string, packageJson: string, apiCode: string, userId: string): string[] => {
     console.log("User ID:", userId);
 

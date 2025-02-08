@@ -4,6 +4,8 @@ import { handleError } from "../utils/errorHandler";
 import UserModel, { UserType } from "../db/userModel";
 import {Params} from "../types/params";
 
+//------------------ USER CONTROLLER----------------
+
 export const getChecksHistory = async (req:Request<Params,{},{}>, res:Response): Promise<void> => {
     const {userId} = req.params;
     try{

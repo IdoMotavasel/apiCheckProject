@@ -7,6 +7,8 @@ import { Blacklist, IBlacklist } from "../db/blacklistModel";
 import { handleError } from "../utils/errorHandler";
 import { RefreshRequestBody } from "../types/refreshControllerTypes";
 
+//------------------ USER & ADMIN CONTROLLER----------------
+
 const accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET!;
 
 export const refreshToken = async(req:Request<{},{},RefreshRequestBody>, res:Response):Promise<void> => {

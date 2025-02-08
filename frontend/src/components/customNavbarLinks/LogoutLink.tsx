@@ -3,6 +3,7 @@ import { useDispatch} from 'react-redux';
 import { logoutUser } from '../../utils/authUtils';
 import { useToken } from '../../utils/decodingUtils';
 import { AppDispatch } from '../../store/store';
+import TokenWrapper from '../routeHelpers/TokenWrapper';
 
 const LogoutLink = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -14,7 +15,9 @@ const LogoutLink = () => {
         await logoutUser(dispatch, accessToken, refreshToken);
     };
     return (
-        <Link to="/auth/login" onClick={handleLogout}>Logout</Link>
+        <TokenWrapper>
+            <Link to="/auth/login" onClick={handleLogout} className="navbar-link">Logout</Link>
+        </TokenWrapper>
     );
 };
 

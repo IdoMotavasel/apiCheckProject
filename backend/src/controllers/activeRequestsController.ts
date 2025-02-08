@@ -5,6 +5,8 @@ import  UserModel, {UserType} from "../db/userModel";
 import { Params } from "../types/params";
 import { UserRequestType } from "../db/userRequestModel";
 
+//------------------ USER CONTROLLER----------------
+
 export const getActiveRequests = async (req:Request<Params,{},{}>, res: Response): Promise<void> => {
     const {userId} = req.params;
 

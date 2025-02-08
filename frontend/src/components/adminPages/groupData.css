@@ -1,48 +1,88 @@
-.container {
-    width: 100%;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    height: calc(100vh - 20vh);
-    margin-top: 20vh;
-    overflow-y: auto;
-    box-sizing: border-box;
-  }
-  
-  .searchBar {
-    margin: 10px 0;
-    padding: 8px;
-    width: 100%;
-    font-size: 16px;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  .table th,
-  .table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-  }
-  
-  .removeButton {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .error {
-    color: red;
-    font-weight: bold;
-  }
-  
+/* GroupData Page Styling */
+.group-data-group-code {
+  font-size: 2.5rem;
+  color: #66a68b; /* Greenish theme color for group code */
+  margin-bottom: 20px;
+}
+
+.error {
+  color: #ff4d4d; /* Red color for error messages */
+  font-weight: bold;
+}
+
+.searchBar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid #66a68b;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  font-size: 1rem;
+  color: #333;
+}
+
+.searchBar:focus {
+  border-color: #33a679; /* Slightly darker green on focus */
+  outline: none;
+}
+
+.table {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.table th {
+  background-color: #66a68b; /* Header background with greenish color */
+  color: #fff;
+}
+
+.table td {
+  color: #333;
+}
+
+.removeButton {
+  background-color: #ff4d4d; /* Red color for remove button */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background-color: #e53935; /* Darker red on hover */
+}
+
+.removeButton:focus {
+  outline: none;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Slightly grey background for even rows */
+}
+
+.table tr:hover {
+  background-color: #f1f1f1; /* Lighter grey background on row hover */
+}
+
+p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+p.no-users {
+  font-style: italic;
+  color: #888;
+}

@@ -3,6 +3,8 @@ import { verifyAccessToken } from "../utils/tokenVerification";
 import { handleError } from "../utils/errorHandler";
 import  jwt  from "jsonwebtoken";
 
+//------------- MIDDLEWARE FOR VERIFYING THE ACCESS TOKEN OF A USER/ADMIN ------------------
+
 export const protectedRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try{
         const token: string | undefined = req.headers.authorization?.split(' ')[1];

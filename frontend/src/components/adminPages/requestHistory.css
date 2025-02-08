@@ -1,0 +1,122 @@
+/* Request History Page styles */
+
+/* Header styling */
+.request-history-header {
+    font-size: 2rem;
+    color: #66a68b;  /* Theme color */
+    text-align: center;
+    margin-top: 2vh;
+  }
+  
+  /* Table container styling */
+  .request-history-table-container {
+    width: 90vw;
+    max-width: 1200px;
+    margin: 3vh auto;
+    overflow-x: auto;
+    padding: 2vh;
+    border-radius: 12px;
+    background-color: #f0f4f1; /* Slightly off-white for the background */
+  }
+  
+  /* Table styles */
+  .request-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .request-history-table th, .request-history-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .request-history-table th {
+    background-color: #66a68b;  /* Theme color */
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  .request-history-table td {
+    background-color: #f9faf6;  /* Light background for table data */
+    color: #333;
+  }
+  
+  /* Row color alternation */
+  .request-history-dark-row {
+    background-color: #eef3f0; /* Light greenish background for odd rows */
+  }
+  
+  .request-history-light-row {
+    background-color: #ffffff;  /* White background for even rows */
+  }
+  
+  /* Number column styling */
+  .request-history-number-column {
+    font-weight: bold;
+    color: #66a68b;
+  }
+  
+  /* Status styling */
+
+  .request-history-status-valid,
+  .request-history-status-invalid {
+    font-weight: bold;
+  }
+
+  .request-history-status-valid {
+    color: #66a68b;  /* Greenish theme color for valid status */
+  }
+  
+  .request-history-status-invalid {
+    color: #ff4d4d;  /* Red color for invalid status */
+  }
+  
+  /* Admin's Notes and Decision styling */
+  .request-history-admin-notes,
+  .request-history-admin-decision {
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .request-history-admin-notes span,
+  .request-history-admin-decision span {
+    font-style: italic;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .request-history-header {
+      font-size: 1.5rem;
+    }
+  
+    .request-history-table th, .request-history-table td {
+      padding: 0.8rem;
+    }
+  
+    .request-history-table-container {
+      width: 95vw;
+      padding: 1vh;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .request-history-header {
+      font-size: 1.2rem;
+    }
+  
+    .request-history-table th, .request-history-table td {
+      font-size: 0.9rem;
+      padding: 0.5rem;
+    }
+  
+    .request-history-table-container {
+      width: 100vw;
+      padding: 1vh;
+    }
+  }
+  
