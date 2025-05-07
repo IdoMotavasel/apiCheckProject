@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useToken } from "../../utils/decodingUtils";
-import TokenWrapper from "../routeHelpers/TokenWrapper";
+import {toast} from 'react-toastify';
 
 interface WaitingRequestItemProps {
   username: string;
@@ -39,10 +39,10 @@ const WaitingRequestItem: React.FC<WaitingRequestItemProps> = ({
           }
         }
       );
-      console.log(`${decision} request for ${username}`);
+      toast.success(`Request ${decision} successfully.`);
       onUpdate();
     }catch(error:any){
-      console.error(`Error processing request ${decision} for ${username}:`, error);
+      toast.error(`Failed to ${decision} request.`);
     }
   }
 
@@ -51,7 +51,6 @@ const WaitingRequestItem: React.FC<WaitingRequestItemProps> = ({
   };
 
   return (
-    <TokenWrapper>
       <li className="request-item">
         <div>
           <strong>{username}</strong>
@@ -62,6 +61,7 @@ const WaitingRequestItem: React.FC<WaitingRequestItemProps> = ({
         {/* Text area for notes */}
         <div>
           <textarea
+            className="waiting-requests-textarea"
             value={notes}
             onChange={handleNotesChange}
             placeholder="Enter your notes here"
@@ -76,7 +76,6 @@ const WaitingRequestItem: React.FC<WaitingRequestItemProps> = ({
           <button onClick={() => handleDecision("disapproved")}>Disapprove</button>
         </div>
       </li>
-    </TokenWrapper>
   );
 };
 

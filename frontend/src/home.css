@@ -1,61 +1,62 @@
-/* Home Page Styling - Scoped under .home-page */
-.home-page {
-    text-align: center;
-    color: var(--text-color);
-    background-color: var(--background-color);
-    padding: 3vh 2vw;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: center; /* Center items horizontally */
-    align-items: center; /* Center items vertically */
-  }
-  
-  /* Neon Flicker Effect */
-  .neon {
-    font-family: 'fantasy';
-    font-size: 8vh; /* Font size in vh for responsiveness */
-    color: #66a68b;
-    position: relative;
-    font-weight: 400;
-    letter-spacing: 1vw; /* Letter-spacing in vw for responsiveness */
-    text-shadow: 1px 0px 4px #66a68b, 2px 0px 4px #5fa789, 3px 0px 4px #57a786, 2px 0px 3px #36aa79, 2px 3px 15px #034b2d;
-    white-space: nowrap; /* Ensures the text stays in one line */
-  }
-  
-  /* Slow flicker effect */
-  .flicker-slow {
-    animation: flicker 3s linear infinite;
-  }
-  
-  /* Fast flicker effect */
-  .flicker-fast {
-    animation: flicker 1s linear infinite;
-  }
-  
-  /* Keyframes for flicker animation */
-  @keyframes flicker {
-    0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-      opacity: .99;
-    }
-    20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-      opacity: 0.4;
-    }
-  }
-  
-  /* New container class for centering content */
-  .centered-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%; /* This takes full height of the viewport */
-    position: relative;
-    flex-direction: column; /* Ensure the content is vertically centered */
-  }
-  
-  
-  
+/* Home Page Styling */
+.home-container {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+/* Welcome text */
+.home-username {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  color: #66a68b;
+  margin-bottom: 5vh;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Spinner Wrapper - Scales Responsively */
+.home-spinner-wrapper {
+  width: clamp(200px, 40vw, 300px);
+  height: clamp(200px, 40vw, 300px);
+  border-radius: 50%;
+  background: conic-gradient(#66a68b, #3a9d75, #0d6f52, #66a68b);
+  animation: home-rotate 4s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Inner Spinner */
+.home-spinner {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner Text */
+.home-spinner-text {
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  color: #66a68b;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+/* Rotation Animation */
+@keyframes home-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

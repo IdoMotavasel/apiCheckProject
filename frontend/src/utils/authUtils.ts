@@ -1,6 +1,7 @@
 import axios from "axios";
 import { clearTokens } from '../store/authSlice';
 import { LOGOUT_URL } from '../urls';
+import { disconnectSocket } from "../socket/socket";
 
 export const logoutUser = async (dispatch: any, accessToken: string | null, refreshToken: string | null): Promise<void> => {
   if (accessToken && refreshToken) {
@@ -17,6 +18,7 @@ export const logoutUser = async (dispatch: any, accessToken: string | null, refr
 
       if (response.status === 200) {
         // Clear tokens if logout is successful
+        disconnectSocket();
         dispatch(clearTokens());
       }
     } catch (error) {

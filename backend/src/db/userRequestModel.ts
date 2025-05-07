@@ -2,21 +2,19 @@ import mongoose, {Model,Schema} from 'mongoose';
 
 export interface UserRequestType extends Document {
     _id: mongoose.Types.ObjectId;
-    isValid: boolean;
-    username: string;
+    userId: mongoose.Types.ObjectId;
     apiCodeId: mongoose.Types.ObjectId;
     adminsNotes?: string;
-    adminsDecision?: string;
+    adminsDecision?: "approved" | "disapproved" | null;
     status: "waiting" | "checked";
 }
 
 const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserRequestType>(
     {
-        isValid: { type: Boolean, required: true },
-        username: { type: String, required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         apiCodeId: { type: Schema.Types.ObjectId, ref: 'ApiCode', required: true },
         adminsNotes: { type: String, default: null },
-        adminsDecision: { type: String, default: null },
+        adminsDecision: { type: String, enum: ["approved", "disapproved", null], default: null },
         status: { type: String, required: true, enum: ["waiting", "checked"], default: "waiting" },
     },
     {

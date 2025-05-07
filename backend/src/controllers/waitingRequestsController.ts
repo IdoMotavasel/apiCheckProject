@@ -4,52 +4,38 @@ import { UserRequest, UserRequestType } from "../db/userRequestModel";
 import UserModel, { UserType } from "../db/userModel";
 import { Params } from "../types/params";
 import mongoose from "mongoose";
-
+import { io } from "../sockets/socketServer";
 //----------------- ADMIN CONTROLLER---------------
 
 export const getWaitingRequests = async (req: Request<Params,{},{}>, res: Response): Promise<void> => {
   try {
-    console.log("entered getWaitingRequests");
     const { userId } = req.params;
-    console.log("userid: ", userId);
 
-    // Find the admin by ID and populate their usersGroup
     const admin: AdminType | null = await AdminModel.findById(userId);
     if (!admin) {
       res.status(404).json({ message: "Admin not found." });
       return;
     }
-
-    // Use the usersGroup directly (it's already an array of ObjectId)
-    const userIds: mongoose.Types.ObjectId[] = admin.usersGroup;
-    console.log("users ids: ", userIds);
+    const userIds = await UserModel.find({ adminId: admin._id }).distinct("_id");
 
     if (userIds.length === 0) {
         res.status(200).json({ message: "No users yet" });
         return;
     }
-
-    const users: UserType[] = await UserModel.find({
-        _id: { $in: userIds },
-      }).select("username");
-  
-    const usernames: string[] = users.map((user) => user.username);
-    console.log("usernames: ", usernames);
-
-    // Fetch all requests with status "waiting" and valid users
     const requests: UserRequestType[] = await UserRequest.find({
       status: "waiting",
-      isValid: true,
-      username: { $in: usernames },
+      userId: { $in: userIds },
     })
       .populate({
         path: "apiCodeId",
-        select: "description", 
+        select: "description apiCode", 
       })
-      .select("username createdAt") 
+      .populate({
+        path:"userId",
+        select: "username",
+      })
+      .select("createdAt") 
       .exec();
-
-      console.log("waiting requests: ", requests);
 
     res.status(200).json(requests);
   } catch (error: any) {
@@ -69,19 +55,29 @@ export const updateUserRequest  = async (req:Request, res:Response):Promise<void
 
   try{
     const updatedRequest = await UserRequest.findByIdAndUpdate(
-      requestId, // Search by ID
+      requestId, 
       {
         adminsNotes,
         adminsDecision,
-        status: "checked", // Update status to 'checked'
+        status: "checked", 
       },
-      { new: true } // Return the updated document
+      { new: true } 
     );
 
     if (!updatedRequest) {
       res.status(404).json({ message: "Request not found." });
       return;
     }
+
+    const userId = updatedRequest.userId.toString();
+
+    const populatedRequest = await updatedRequest.populate("apiCodeId", "name");
+    const requestName = (populatedRequest.apiCodeId as any)?.name || "your request";
+
+    io.to(userId).emit("requestChecked", {
+      requestId: updatedRequest._id,
+      requestName,
+    });
 
     // Respond with the updated request
     res.status(200).json({

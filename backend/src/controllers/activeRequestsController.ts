@@ -11,14 +11,13 @@ export const getActiveRequests = async (req:Request<Params,{},{}>, res: Response
     const {userId} = req.params;
 
     try{
-        const user: UserType | null = await UserModel.findById(userId).select("username").exec();
+        const user: UserType | null = await UserModel.findById(userId);
         if (!user) {
             handleError(res,404,'User not found');
             return;
         }
-        const username: string = user.username;
 
-        const requests: UserRequestType[] = await UserRequest.find({ username, isValid: true })
+        const requests: UserRequestType[] = await UserRequest.find({ userId, status:"waiting" })
         .populate({
             path: "apiCodeId",
             select: "description",

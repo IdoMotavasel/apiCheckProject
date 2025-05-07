@@ -14,7 +14,6 @@ export default function Login():JSX.Element {
 
     useEffect(() => {
         dispatch(clearTokens());
-        //to add refresh to blacklist if was authenticated.
     }, [dispatch]);
 
     const [errorFeed, setErrorFeed] = useState<string>('');
@@ -25,18 +24,19 @@ export default function Login():JSX.Element {
 
     const handleLogin = async (e:React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         e.preventDefault();
+        if (!username || !password) {
+            setErrorFeed("Both fields must be filled!");
+            return;
+        }
         try{
             const response = await axios.post(LOGIN_URL, {username,password});
             if(response.status === 200 && response.data.userId){
                 const { accessToken, refreshToken } = response.data;
                 dispatch(setTokens({accessToken,refreshToken})); 
                 const role: string | null = accessToken ? jwtDecode<{ role: string }>(accessToken).role : null;
-                if (role === 'admin') {
-                    console.log("redirecting to admin home");
-                    navigate('/admin/home');
-                } else if (role === 'user') {
-                    console.log("redirecting to user home");
-                    navigate('/user/home');
+                if (role === 'admin' || role === 'user') {
+                    console.log("redirecting to shared home");
+                    navigate('/home');
                 }
             }
             else setErrorFeed(response.data.message);
@@ -68,7 +68,9 @@ export default function Login():JSX.Element {
                     onChange={(e) => setPassword(e.target.value)}
                     className="login-input"
                 />
-                <div className="error-message">{errorFeed}</div>
+                {errorFeed && (
+                    <div className="error-message">{errorFeed}</div>
+                )}
             </div>
             <div className="authentication-buttons">
                 <button onClick={handleLogin} className="login-button">Login</button>

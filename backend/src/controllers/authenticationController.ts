@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import AdminModel , {AdminType} from "../db/adminModel";
-import UserModel , {UserType} from "../db/userModel";
+import AdminModel, { AdminType } from "../db/adminModel";
+import UserModel, { UserType } from "../db/userModel";
 import { isPasswordMatch, hashPassword } from "../utils/passwordHandler";
 import { LoginRequestBody, RegisterRequestBody, LogoutRequestBody } from "../types/authenticationControllerTypes";
 import { handleError } from "../utils/errorHandler";
@@ -8,92 +8,111 @@ import { Blacklist } from "../db/blacklistModel";
 import { generateAccessToken, generateRefreshToken } from "../utils/tokenGenerator";
 import { verifyRefreshToken } from "../utils/tokenVerification";
 import jwt from 'jsonwebtoken';
+import { io } from "../sockets/socketServer";
 
 //------------------ ADMIN & USER CONTROLLER----------------
 
 const adminAuthorizationSecret: string = process.env.ADMIN_AUTHORIZATION_SECRET!;
 
-export const login = async ( req: Request<{},{},LoginRequestBody>, res: Response): Promise<void> => {
+export const login = async (req: Request<{}, {}, LoginRequestBody>, res: Response): Promise<void> => {
     const { username, password } = req.body;
 
     let retrievedUser: UserType | AdminType | null;
-    try{
+    try {
         retrievedUser = await AdminModel.findOne({ username: username }) || await UserModel.findOne({ username: username });
     }
-    catch(error:any){
+    catch (error: any) {
         handleError(res, 400, 'Login Failed');
         return;
     }
-    
-    if(!retrievedUser){
+
+    if (!retrievedUser) {
         handleError(res, 400, 'User not found');
         return;
     }
-    if(!(await isPasswordMatch(password, retrievedUser.password))){
+    if (!(await isPasswordMatch(password, retrievedUser.password))) {
         handleError(res, 400, 'Wrong password');
         return;
     }
 
-    const accessToken: string = generateAccessToken(retrievedUser._id,retrievedUser.role, retrievedUser.username);
-    const refreshToken: string = generateRefreshToken(retrievedUser._id,retrievedUser.role, retrievedUser.username);
+    const accessToken: string = generateAccessToken(retrievedUser._id, retrievedUser.role, retrievedUser.username);
+    const refreshToken: string = generateRefreshToken(retrievedUser._id, retrievedUser.role, retrievedUser.username);
 
-    res.status(200).json({accessToken: accessToken, refreshToken: refreshToken, message: 'Logged in successfully', userId: retrievedUser._id}); 
+    res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken, message: 'Logged in successfully', userId: retrievedUser._id });
 };
 
-export const logout = async (req: Request<{},{},LogoutRequestBody>, res: Response): Promise<void> => {
+export const logout = async (req: Request<{}, {}, LogoutRequestBody>, res: Response): Promise<void> => {
     const { refreshToken } = req.body;
 
-    if(!refreshToken){
-        handleError(res,400,'Refresh token is required');
+    if (!refreshToken) {
+        handleError(res, 400, 'Refresh token is required');
         return;
     }
 
-    try{
+    try {
         const verified: string | jwt.JwtPayload | null = verifyRefreshToken(refreshToken);
         if (!verified) {
             handleError(res, 400, 'Invalid refresh token');
             return;
         }
-        await Blacklist.create({ token: refreshToken});
-        res.status(200).json({ message: 'Logged out successfully'});
-    }catch(error:any){
-        handleError(res,500,'Failed to log out.')
+
+        const decoded = jwt.decode(refreshToken) as jwt.JwtPayload;
+        const exp = decoded?.exp;
+        if (!exp) {
+            handleError(res, 400, 'Token does not contain expiration (exp) field');
+            return;
+        }
+
+        // Convert exp to Date and use as createdAt
+        const expiryDate = new Date(exp * 1000);
+        const now = new Date();
+
+        if (expiryDate <= now) {
+            // Token already expired; no need to blacklist
+            res.status(200).json({ message: 'Token already expired, no need to blacklist' });
+            return;
+        }
+        await Blacklist.create({ token: refreshToken, expiresAt: expiryDate, });
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error: any) {
+        handleError(res, 500, 'Failed to log out.')
     }
 };
 
-export const register = async ( req: Request<{},{},RegisterRequestBody>, res: Response): Promise<void> => {
+export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, password, role, adminGroupCode, adminAuthorizationCode } = req.body;
     const existingUser: UserType | AdminType | null = await UserModel.findOne({ username }) || await AdminModel.findOne({ username });
-    if(existingUser){
+    if (existingUser) {
         handleError(res, 400, 'Username already exists');
         return;
     }
     const hashedPassword: string = await hashPassword(password);
-    if( role === "user"){
+    if (role === "user") {
 
-        const admin: AdminType | null= await AdminModel.findOne({adminGroupCode});
-        if(!admin){
-            handleError(res,404,'Invalid adminGroupCode');
+        const admin: AdminType | null = await AdminModel.findOne({ adminGroupCode });
+        if (!admin) {
+            handleError(res, 404, 'Invalid admin group code');
             return;
         }
         const newUser: UserType = new UserModel({
             username,
             password: hashedPassword,
             role,
-            adminId:admin._id,
+            adminId: admin._id,
         });
-        const savedUser : UserType = await newUser.save();
+        const savedUser: UserType = await newUser.save();
 
-        admin.usersGroup.push(savedUser._id);
-        await admin.save();
+        io.to(admin._id.toString()).emit("newUserRegistered", {
+            username: savedUser.username,
+        });
 
-        res.status(201).json({ message: "User registered successfully", user: savedUser});
+        res.status(201).json({ message: "User registered successfully", user: savedUser });
         return;
-    }else if( role === "admin"){
+    } else if (role === "admin") {
         console.log('checking admin');
-        console.log('auth code:',adminAuthorizationCode);
-        if (adminAuthorizationCode !== adminAuthorizationSecret){
-            handleError(res,403,'Invalid admin authorization code');
+        console.log('auth code:', adminAuthorizationCode);
+        if (adminAuthorizationCode !== adminAuthorizationSecret) {
+            handleError(res, 403, 'Invalid admin authorization code');
             return;
         }
         const generatedAdminGroupCode: string = generateObfuscatedGroupCode();
@@ -106,24 +125,21 @@ export const register = async ( req: Request<{},{},RegisterRequestBody>, res: Re
         });
 
         const savedAdmin: AdminType = await newAdmin.save();
-        res.status(201).json({ message: 'Admin registered successfully', admin: savedAdmin});
+        res.status(201).json({ message: 'Admin registered successfully', admin: savedAdmin });
     }
 };
 
-const generateObfuscatedGroupCode = (): string => { //function for creating a unique Group Code for an admin.
+const generateObfuscatedGroupCode = (): string => {
     const now: Date = new Date();
     const timestamp: string = `${now.getFullYear()}${(now.getMonth() + 1)
         .toString()
         .padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours()
-        .toString()
-        .padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds()
-        .toString()
-        .padStart(2, '0')}`;
+            .toString()
+            .padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds()
+                .toString()
+                .padStart(2, '0')}`;
 
     const shuffledTimestamp: string = parseInt(timestamp.split('').reverse().join(''), 10).toString(36).toUpperCase();
     const randomString: string = Math.random().toString(36).substring(2, 6).toUpperCase();
     return `${shuffledTimestamp}-${randomString}`;
 };
-
-//to do:
-//use case and uml

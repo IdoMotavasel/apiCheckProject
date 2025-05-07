@@ -89,6 +89,24 @@
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
 }
 
+.error-message {
+    color: #e74c3c;
+    background-color: rgba(255, 255, 255, 0.608);
+    border: 2px solid #66a68b;
+    border-radius: 8px;
+    padding: 6px 10px;
+    animation: text-glow 1.5s infinite alternate;
+}
+
+@keyframes text-glow {
+    from {
+        text-shadow: 0 0 5px #e74c3c;
+    }
+    to {
+        text-shadow: 0 0 15px #e74c3c;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .login-form {

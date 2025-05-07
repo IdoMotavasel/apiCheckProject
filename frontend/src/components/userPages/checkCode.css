@@ -1,87 +1,185 @@
-/*.check-code-container {
-    height: 85vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    position: absolute;
-    bottom: 0; 
-    width: 100%;
-    overflow: hidden;
+.check-code-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.check-code-title {
+  text-align: center;
+  color:#66a68b;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.check-code-description {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.check-code-area-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Ensures space between sections */
+}
+
+.check-code-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-code-section-title {
+  font-size: 18px;
+  color: #3ea279;
+  font-weight: bold;
+}
+
+.check-code-textarea {
+  height: 250px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.check-code-description-textarea {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #555;
+  background-color: #252526;
+  color: white;
+  font-size: 14px;
+  resize: none;
+}
+
+.check-code-description-textarea:focus {
+  border: 1px solid #F64375;
+}
+
+
+.check-code-button,
+.check-code-clear-button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.check-code-button {
+  background-color: #66a68b;
+  color: white;
+}
+
+.check-code-button:hover {
+  background-color: #3ea279;
+}
+
+.check-code-clear-button {
+  background-color: #F64375;
+  color: white;
+}
+
+.check-code-clear-button:hover {
+  background-color: #f6235f;
+}
+
+.check-code-error-message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.check-code-popup-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background-color: white;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 2rem;
+  z-index: 9999;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  animation: popup-fade 0.3s ease-out forwards;
+  text-align: center;
+}
+
+@keyframes popup-fade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
   }
-  
-  .code-area-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 70vh; 
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
-  
-  .side-textarea {
-    width: 25%;
-    padding: 10px;
-    height: 100%;
-  }
-  
-  .side-textarea h3 {
-    text-align: center;
-  }
-  
-  .main-textarea-container {
-    width: 50%;
-    position: relative;
-  }
-  
-  .code-textarea {
-    width: 100%;
-    height: 100%;
-    resize: none;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    white-space: pre;
-    word-wrap: break-word;
-  }
-  
-  .large {
-    height: calc(70% - 50px); 
-  }
-  
-  .check-api-button {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .check-api-button:hover {
-    background-color: #45a049;
-  }
-  
-  .description-textarea {
-    width: 97%;
-    height: 100px;
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: none;
-    background-color: #282a36;
-    color: #f8f8f2;
-    font-family: 'Courier New', Courier, monospace;
-    align-self: center;
-  }
-  
-  .error-message {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-  }*/
-  
-  
+}
+
+.check-code-popup-valid {
+  border-color: #28a745;
+  background-color: #66a68b;
+  color: white;
+}
+
+.check-code-popup-invalid {
+  border-color: #dc3545;
+  background-color: red;
+  color: white;
+}
+
+.check-code-popup-message {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.check-code-popup-close {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.check-code-popup-close:hover {
+  background-color: #ddd;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.check-code-language-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.check-code-language-selector label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.check-code-language-dropdown {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #282c34;
+  color: #fff;
+  font-size: 14px;
+}
+

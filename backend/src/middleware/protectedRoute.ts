@@ -17,7 +17,7 @@ export const protectedRoute = async (req: Request, res: Response, next: NextFunc
             res.status(401).json({ message: 'Invalid access token'});
             return;
         }
-        (req as any).userId = verified.userId; // to find a better solution
+        (req as any).userId = verified.userId; 
         next();
     }catch(error: any){
         handleError(res, 500,'Internal server error protected');

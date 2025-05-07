@@ -20,15 +20,21 @@ export const refreshToken = async(req:Request<{},{},RefreshRequestBody>, res:Res
     }
 
     const isBlacklisted: IBlacklist | null = await Blacklist.findOne({ token: refreshToken });
-        if (isBlacklisted) {
-            handleError(res,401,'refresh token is blacklisted');
-            return;
-        }
+    if (isBlacklisted) {
+        handleError(res,401,'refresh token is blacklisted');
+        return;
+    }
 
     console.log('before decoding in refresh');
     let decodedAccessToken: JwtPayload | null = null;
     try {
         decodedAccessToken = jwt.verify(accessToken, accessTokenSecret!) as JwtPayload;
+        console.log("Access token still valid, reusing...");
+        res.status(200).json({
+            message: "Access token is still valid",
+            accessToken,
+        });
+        return;
     } catch (error:any) {
         if (error instanceof TokenExpiredError) {
             console.warn("Access token is expired, proceeding to refresh...");
@@ -38,15 +44,9 @@ export const refreshToken = async(req:Request<{},{},RefreshRequestBody>, res:Res
             return;
         }
     }
-    console.log('decodedAccessToken: ', decodedAccessToken);
-    if(decodedAccessToken){
-        res.status(200).json({ message: 'Access token is still valid'});
-        return;
-    }
 
     console.log('before decoding refresh');
     const decodedRefreshToken: string | jwt.JwtPayload | null = verifyRefreshToken(refreshToken);
-    console.log('decodedRefreshToken: ', decodedRefreshToken);
     if(!decodedRefreshToken){
         console.log('invalid refresh token');
         handleError(res,401,'Invalid refresh token');
@@ -55,9 +55,12 @@ export const refreshToken = async(req:Request<{},{},RefreshRequestBody>, res:Res
 
     const { userId, role, username } = decodedRefreshToken as {userId: mongoose.Types.ObjectId; role: 'admin' | 'user', username: string};
     try{
-        const newAccessToken: string = generateAccessToken(userId,role, username);
-        console.log('generated new access: ',newAccessToken);
-        res.status(200).json({ message: 'New access token generated successfully', accessToken: newAccessToken,});
+        const newAccessToken: string = generateAccessToken(userId, role, username);
+        console.log("Generated new access token:", newAccessToken);
+        res.status(200).json({
+            message: "New access token generated successfully",
+            accessToken: newAccessToken,
+        });
     }catch(error: any){
         handleError(res,500, 'failed to generate new access token');
     }

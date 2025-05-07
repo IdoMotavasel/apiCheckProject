@@ -1,0 +1,216 @@
+/* Request History Page styles */
+
+/* Header styling */
+.history-header {
+    font-size: 2rem;
+    color: Black;  /* Theme color */
+    text-align: center;
+    margin-top: 2vh;
+  }
+  
+  /* Table container styling */
+  .history-table-container {
+    width: 90vw;
+    max-width: 1200px;
+    margin: 3vh auto;
+    overflow-x: auto;
+    padding: 2vh;
+    border-radius: 12px;
+    background-color: #f0f4f1; /* Slightly off-white for the background */
+  }
+  
+  /* Table styles */
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .history-table th, .history-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .history-table th {
+    background-color: #66a68b;  /* Theme color */
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  .history-table td {
+    background-color: #f9faf6;  /* Light background for table data */
+    color: #333;
+  }
+  
+  /* Row color alternation */
+  .history-dark-row {
+    background-color: #eef3f0; /* Light greenish background for odd rows */
+  }
+  
+  .history-light-row {
+    background-color: #ffffff;  /* White background for even rows */
+  }
+  
+  /* Number column styling */
+  .history-number-column {
+    font-weight: bold;
+    color: #66a68b;
+  }
+  
+  /* Status styling */
+
+  .history-status-valid,
+  .history-status-invalid {
+    font-weight: bold;
+  }
+
+  .history-status-valid {
+    color: #66a68b;  /* Greenish theme color for valid status */
+  }
+  
+  .history-status-invalid {
+    color: #ff4d4d;  /* Red color for invalid status */
+  }
+  
+  /* Admin's Notes and Decision styling */
+  .history-admin-notes,
+  .history-admin-decision {
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .history-admin-notes span,
+  .history-admin-decision span {
+    font-style: italic;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .history-header {
+      font-size: 1.5rem;
+    }
+  
+    .history-table th, .history-table td {
+      padding: 0.8rem;
+    }
+  
+    .history-table-container {
+      width: 95vw;
+      padding: 1vh;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .history-header {
+      font-size: 1.2rem;
+    }
+  
+    .history-table th, .history-table td {
+      font-size: 0.9rem;
+      padding: 0.5rem;
+    }
+  
+    .history-table-container {
+      width: 100vw;
+      padding: 1vh;
+    }
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+  
+  .rh-refresh-button {
+    background-color: rgba(255, 255, 255, 0.597);
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .rh-refresh-button:hover {
+    background-color: #529c7a;
+  }
+  
+  .rh-updated-time {
+    font-size: 0.9rem;
+    color: black;
+    font-style: italic;
+  }
+
+  .history-empty-message {
+    font-size: 1.2rem;
+    color: #555;
+    text-align: center;
+    margin-top: 3vh;
+    font-style: italic;
+  }
+
+  .ar-message{
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #ff4d4d;
+  }
+
+  .rh-search-bar {
+    width: 100%;
+    max-width: 400px;
+    margin: 1.5rem auto 2rem auto; 
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #333;
+    color: white;
+    display: block;
+  }
+  
+  .rh-search-bar::placeholder {
+    color: #bbb;
+  }
+
+  .rh-chart-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0;
+    background-color: rgb(15, 14, 14);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .rh-refresh-button {
+    background-color: #92baa9;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .rh-refresh-button:hover {
+    background-color: #529c7a;
+  }
+  
+  .rh-updated-time {
+    font-size: 0.9rem;
+    color: white;
+    font-style: italic;
+  }
+
+
+  

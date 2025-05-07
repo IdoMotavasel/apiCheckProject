@@ -6,7 +6,6 @@ export interface AdminType extends Document {
     password: string;
     role: "admin";
     adminGroupCode: string;
-    usersGroup: mongoose.Types.ObjectId[];
     }
 
 const AdminSchema: Schema<AdminType> = new Schema<AdminType>(
@@ -15,7 +14,6 @@ const AdminSchema: Schema<AdminType> = new Schema<AdminType>(
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ["admin"], default: "admin" },
     adminGroupCode: { type: String, required: true, unique: true },
-    usersGroup: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
 );
 

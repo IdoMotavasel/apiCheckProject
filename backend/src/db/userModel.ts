@@ -12,7 +12,7 @@ const UserSchema: Schema<UserType> = new Schema<UserType>({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ["user"], default: "user" },
-    adminId: { type: mongoose.Schema.Types.ObjectId, ref: "AdminUser", required: true }, // reference to admin
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true },
 },
 );
 

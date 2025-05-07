@@ -4,12 +4,15 @@ import compression from 'compression';
 import cors from 'cors';
 import connectToDB from './db/connectionConfigDB';
 import router from './routes/serverRouter';
+import { createServer } from 'http';
+import { initSocketServer } from './sockets/socketServer';
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Initialize Express app
 const app: Express = express();
+const server = createServer(app);
 
 // Enable compression
 app.use(compression());
@@ -29,10 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 //Connection to db
 connectToDB();
 
+initSocketServer(server);
+
 const PORT: string = process.env.PORT!;
 
 // Starting the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 

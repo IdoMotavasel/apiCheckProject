@@ -1,25 +1,31 @@
 import { Request, Response } from 'express';
+import axios from 'axios';
 import ApiCode, { ApiCodeType } from '../db/apiCodeModel';
-import {UserRequest, UserRequestType} from '../db/userRequestModel';
-import { createTarFile } from '../utils/createTarFile';
+import { UserRequest, UserRequestType } from '../db/userRequestModel';
 import UserModel from '../db/userModel';
-import { checkApiRequestBody} from '../types/checkApiTypes';
+import { checkApiRequestBody } from '../types/checkApiTypes';
 import { Params } from '../types/params';
 import { UserType } from '../db/userModel';
+import dotenv from 'dotenv';
+import { io } from '../sockets/socketServer';
+
+dotenv.config();
+const FLASK_SERVER_URL: string = process.env.FLASK_SERVER_URL!;
+
 
 //------------------ USER CONTROLLER----------------
 
-export const checkApi = async (req: Request<Params,{},checkApiRequestBody>, res: Response):Promise<void> => {
-    const { description, dockerfileCode, packageJsonCode, apiCode } = req.body;
+export const checkApi = async (req: Request<Params, {}, checkApiRequestBody>, res: Response): Promise<void> => {
+    const { description, apiCode, name } = req.body;
     console.log('entered Check api');
-    console.log('description: ',description);
-    console.log('dockerfile: ',dockerfileCode);
-    console.log('packageJson: ',packageJsonCode);
-    console.log('mainCode: ',apiCode);
+    console.log('description: ', description);
+    console.log('mainCode: ', apiCode);
+    console.log('name: ', name);
 
-    const {userId} = req.params;
+    const { userId } = req.params;
     console.log('userId: ', userId);
-    try{
+
+    try {
         const user: UserType | null = await UserModel.findById(userId);
         if (!user) {
             console.log('user not found');
@@ -27,33 +33,46 @@ export const checkApi = async (req: Request<Params,{},checkApiRequestBody>, res:
             return;
         }
 
-        const username: string = user.username;
-        console.log('username retrieved: ', username);
-        
-        const tarFile: Buffer<ArrayBufferLike> = await createTarFile([
-            { name: 'Dockerfile', content: dockerfileCode },
-            { name: 'package.json', content: packageJsonCode },
-            { name: 'main.js', content: apiCode },
-        ]);
-    
-        // Randomly determine if the API is valid (for now)
-        const isValid: boolean = Math.random() > 0.5;
+        let isValid: boolean;
+        try {
+            const mlRes = await axios.post(
+                FLASK_SERVER_URL,
+                { code: apiCode },
+                { timeout: 5000 }
+            );
+            isValid = mlRes.data.validity === 'valid';
+        } catch (mlError: any) {
+            console.error('Error calling ML service:', mlError.message || mlError);
+            res.status(502).json({ message: 'Failed to classify code' });
+            return;
+        }
         const apiCodeCreated: ApiCodeType = await ApiCode.create({
             description,
-            zippedApi: tarFile,
+            apiCode,
+            name,
             userId,
         });
-        const userRequest: UserRequestType = await UserRequest.create({
-            isValid,
-            username,
-            apiCodeId: apiCodeCreated._id,
-        });
+
+        if (isValid) {
+            await UserRequest.create({
+                userId,
+                apiCodeId: apiCodeCreated._id,
+                status: "waiting"
+            });
+
+            const adminId = user.adminId.toString();
+            const username = user.username;
+
+            io.to(adminId).emit("newWaitingRequest", {
+                username,
+            });
+        }
 
         res.status(200).json({
             message: 'API code processed successfully.',
             validityCheck: isValid ? 'valid' : 'invalid',
         });
-    }catch(error:any){
+    } catch (error: any) {
         console.error('Error in checkApi:', error);
         res.status(500).json({ message: 'Internal server error' });
     }

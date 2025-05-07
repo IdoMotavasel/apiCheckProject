@@ -1,0 +1,10 @@
+[
+    "ls", "pwd", "whoami", "top", "uptime",
+    "df", "free", "ps", "id", "uname",
+    "cat", "grep", "find", "du",
+    "netstat", "ss", "vmstat", "lsof", "hostname",
+    "head", "tail", "wc", "dmesg", "date",
+    "env", "stat", "who", "basename", "dirname",
+    "which", "cut", "sort", "uniq", "diff"
+]
+  

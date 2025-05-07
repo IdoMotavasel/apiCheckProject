@@ -1,16 +1,26 @@
-/* GroupData Page Styling */
-.group-data-group-code {
-  font-size: 2.5rem;
-  color: #66a68b; /* Greenish theme color for group code */
+/* Group Container */
+.group-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 12vh; /* space for fixed navbar */
+  padding-left: 4vw;
+  padding-right: 4vw;
+}
+
+/* Left Pane Styling (User Table Section) */
+.left-pane {
+  flex: 1;
+  padding-right: 2vw;
+}
+
+.group-code {
+  font-size: 2.2rem;
+  color: #355a4a;
   margin-bottom: 20px;
 }
 
-.error {
-  color: #ff4d4d; /* Red color for error messages */
-  font-weight: bold;
-}
-
-.searchBar {
+.search-bar {
   width: 100%;
   max-width: 400px;
   padding: 10px;
@@ -22,38 +32,46 @@
   color: #333;
 }
 
-.searchBar:focus {
-  border-color: #33a679; /* Slightly darker green on focus */
+.search-bar:focus {
+  border-color: #33a679;
   outline: none;
 }
 
-.table {
+.user-table {
   width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
   border-collapse: collapse;
   background-color: #fff;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.table th, .table td {
+.user-table th,
+.user-table td {
   padding: 12px;
   text-align: left;
   font-size: 1rem;
   border-bottom: 1px solid #f0f0f0;
 }
 
-.table th {
-  background-color: #66a68b; /* Header background with greenish color */
+.user-table th {
+  background-color: #66a68b;
   color: #fff;
 }
 
-.table td {
+.user-table td {
   color: #333;
 }
 
-.removeButton {
-  background-color: #ff4d4d; /* Red color for remove button */
+.user-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.user-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Remove Button Styling */
+.remove-button {
+  background-color: #ff4d4d;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -61,28 +79,187 @@
   cursor: pointer;
 }
 
-.removeButton:hover {
-  background-color: #e53935; /* Darker red on hover */
+.remove-button:hover {
+  background-color: #e53935;
 }
 
-.removeButton:focus {
+.remove-button:focus {
   outline: none;
 }
 
-.table tr:nth-child(even) {
-  background-color: #f9f9f9; /* Slightly grey background for even rows */
+/* Right Pane Styling (Pie Chart Section) */
+.right-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.table tr:hover {
-  background-color: #f1f1f1; /* Lighter grey background on row hover */
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-p {
-  font-size: 1.1rem;
-  color: #333;
+.chart-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #66a68b;
+  margin-bottom: 10px;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.refresh-button {
+  background-color: #66a68b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.refresh-button:hover {
+  background-color: #559c7d;
+}
+
+.updated-time {
+  font-size: 0.85rem;
+  color: black;
+}
+
+/* General Error/No Users Styling */
+.error {
+  color: #ff4d4d;
+  font-weight: bold;
 }
 
 p.no-users {
   font-style: italic;
   color: #888;
+}
+
+.gd-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.gd-popup-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1e1e1e;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  animation: popup-fade 0.3s ease-out forwards;
+  text-align: center;
+  color: white;
+}
+
+.gd-popup-container h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.gd-highlight {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.gd-auth-code-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 1rem;
+  border-radius: 5px;
+  border: 1px solid #555;
+  background-color: #252526;
+  color: white;
+  font-size: 14px;
+}
+
+.gd-error-text {
+  color: #ff4d4d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.gd-popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.gd-confirm-remove-button,
+.gd-cancel-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.gd-confirm-remove-button {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.gd-confirm-remove-button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.gd-cancel-button {
+  background-color: #555;
+  color: white;
+}
+
+@keyframes popup-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.no-users {
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #888;
+}
+
+.no-stats {
+  text-align: center;
+  font-size: 1.2rem;
+  font-style: italic;
+  margin-top: 2rem;
+  color: #999;
 }
