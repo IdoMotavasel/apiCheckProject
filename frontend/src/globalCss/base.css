@@ -1,0 +1,17 @@
+/* === RESET === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* === BASE HTML/BODY === */
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #66a68b, #99f2c8); /* can be overridden per page */
+    color: #ffffff; /* default text color, can also be overridden */
+}
+  

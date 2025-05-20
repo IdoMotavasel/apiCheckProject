@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store , persistor } from './store/store.ts';
 import App from './App.tsx';
-import './index.css';
+import './globalCss/base.css';
 
 const SplashScreen = () => (
   <div style={{ textAlign: 'center', marginTop: '3rem' }}>

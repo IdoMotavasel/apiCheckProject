@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Params } from "../types/params";
 import AdminModel, { AdminType } from "../db/adminModel";
-import mongoose from "mongoose";
 import UserModel, { UserType } from "../db/userModel";
 import {UserRequest} from "../db/userRequestModel";
 import ApiCode from "../db/apiCodeModel";
@@ -67,35 +66,90 @@ export const removeUserFromGroup = async (req: Request, res: Response): Promise<
 
   export const getGroupStats = async (req: Request, res: Response): Promise<void> => {
     const { adminId } = req.params;
-  
-    try {
-      const admin = await AdminModel.findById(adminId);
-      if (!admin) {
-        res.status(404).json({ message: "Admin or group not found." });
-        return;
+
+  try {
+    const admin = await AdminModel.findById(adminId);
+    if (!admin) {
+      res.status(404).json({ message: "Admin or group not found." });
+      return;
+    }
+
+    const userIds = await UserModel.find({ adminId: admin._id }).distinct("_id");
+    if (userIds.length === 0) {
+      res.status(200).json({ groupSummary: {}, userStats: [] });
+      return;
+    }
+
+    const requests = await UserRequest.find({ userId: { $in: userIds } })
+      .populate({ path: "userId", select: "username" })
+      .select("userId adminsDecision status mlConfidence")
+      .exec();
+
+    let totalConfidence = 0;
+    let validCount = 0;
+    let invalidCount = 0;
+    let approved = 0;
+    let disapproved = 0;
+    let agreement = 0;
+
+    const userMap: Record<string, { total: number; approved: number; confidenceSum: number }> = {};
+
+    for (const req of requests) {
+      const username = (req.userId as any).username;
+      const conf = req.mlConfidence || 0;
+      const decision = req.adminsDecision;
+
+      if (!userMap[username]) {
+        userMap[username] = { total: 0, approved: 0, confidenceSum: 0 };
       }
 
-      const userIds = await UserModel.find({ adminId: admin._id }).distinct('_id');
-  
-      const approvedCount = await UserRequest.countDocuments({
-        userId: { $in: userIds },
-        status: "checked",
-        adminsDecision: "approved"
-      });
-  
-      const disapprovedCount = await UserRequest.countDocuments({
-        userId: { $in: userIds },
-        status: "checked",
-        adminsDecision: "disapproved"
-      });
-  
-      res.status(200).json({
-        approved: approvedCount,
-        disapproved: disapprovedCount,
-        total: approvedCount + disapprovedCount
-      });
-    } catch (error) {
-      console.error("Error fetching group stats:", error);
-      res.status(500).json({ message: "Failed to fetch group statistics." });
+      userMap[username].total++;
+      userMap[username].confidenceSum += conf;
+
+      if (decision === "approved") approved++;
+      if (decision === "disapproved") disapproved++;
+
+      if (conf >= 0.5) validCount++;
+      else invalidCount++;
+
+      // Model-admin agreement tracking
+      if ((conf >= 0.5 && decision === "approved") || (conf < 0.5 && decision === "disapproved")) {
+        agreement++;
+      }
+
+      if (decision === "approved") {
+        userMap[username].approved++;
+      }
+
+      totalConfidence += conf;
     }
+
+    const userStats = Object.entries(userMap)
+    .map(([username, data]) => ({
+      username,
+      avgConfidence: data.total ? +(data.confidenceSum / data.total).toFixed(2) : 0,
+      total: data.total,
+      approved: data.approved
+    }))
+    .sort((a, b) => b.total - a.total);
+
+    const totalRequests = requests.length;
+    const avgConfidence = totalRequests ? +(totalConfidence / totalRequests).toFixed(2) : 0;
+
+    res.status(200).json({
+      groupSummary: {
+        avgConfidence,
+        totalRequests,
+        totalValid: validCount,
+        totalInvalid: invalidCount,
+        approved,
+        disapproved,
+        modelAdminAgreement: agreement
+      },
+      userStats
+    });
+  } catch (error) {
+    console.error("Error fetching enhanced group stats:", error);
+    res.status(500).json({ message: "Failed to fetch enhanced group statistics." });
+  }
   };

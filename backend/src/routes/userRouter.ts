@@ -3,7 +3,7 @@ import { protectedRoute } from "../middleware/protectedRoute";
 import { getActiveRequests } from "../controllers/activeRequestsController";
 import { checkApi } from "../controllers/checkApiController";
 import { getChecksHistory } from "../controllers/checksHistoryController";
-import { createContainerFromTar, getApprovedApiCodesByUser, getContainersForAdminGroup } from "../controllers/containerController";
+import { createContainerFromTar, getApprovedApiCodesByUser, getContainersForAdminGroup,deleteContainer } from "../controllers/containerController";
 import { getContainerLogs, runContainer, stopContainer, executeInContainer } from "../controllers/dockerController";
 import multer from 'multer';
 
@@ -23,6 +23,7 @@ export default (router: Router): void => {
     router.post('/user/containers/create-from-api', protectedRoute, upload.single('tarFile'), createContainerFromTar);
     router.get('/user/containers/approved-apis/:userId', protectedRoute, getApprovedApiCodesByUser);
     router.get('/user/containers/admin-group/:userId', protectedRoute, getContainersForAdminGroup);
+    router.delete('/user/containers/delete',protectedRoute, deleteContainer);
 
     //Docker Routes
     router.post('/user/docker/run', protectedRoute, runContainer);

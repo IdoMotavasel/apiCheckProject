@@ -3,6 +3,7 @@ import { useDispatch} from 'react-redux';
 import { logoutUser } from '../../utils/authUtils';
 import { useToken } from '../../utils/decodingUtils';
 import { AppDispatch } from '../../store/store';
+import '../../globalCss/navbar.css';
 
 const LogoutLink = () => {
     const dispatch: AppDispatch = useDispatch();

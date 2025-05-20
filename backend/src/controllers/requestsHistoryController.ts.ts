@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import AdminModel, { AdminType } from "../db/adminModel";
 import { UserRequest, UserRequestType } from "../db/userRequestModel";
-import UserModel, { UserType } from "../db/userModel";
+import UserModel from "../db/userModel";
 import { Params } from "../types/params";
-import mongoose from "mongoose";
 
 //------------------ ADMIN CONTROLLER----------------
 

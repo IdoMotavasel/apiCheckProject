@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import './checksHistory.css';
 import { useToken, useTokenProperty } from "../../utils/decodingUtils";
 import { toast } from "react-toastify";
 import ControlBar from "../controlBar/ControlBar";
+import '../history.css';
 
 interface RequestData {
   _id: string;
@@ -104,64 +104,72 @@ const ChecksHistory = () => {
   }
 
   return (
-      <div className="main-container">
-        <h1 className="ch-header">Checks History</h1>
+    <div className="history-container">
+      <h1 className="history-header">Checks History</h1>
 
-        <ControlBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          sortOption={sortBy}
-          setSortOption={setSortBy}
-          sortOptions={[
-            { label: "Newest First", value: "newest" },
-            { label: "Oldest First", value: "oldest" },
-            { label: "Name A-Z", value: "name" },
-          ]}
-          filterValue={filterBy}
-          setFilterValue={setFilterBy}
-          filterOptions={[
-            { label: "All", value: "all" },
-            { label: "Approved", value: "approved" },
-            { label: "Disapproved", value: "disapproved" },
-          ]}
-          toggleLabel={showRecentOnly ? "Show All" : "Show Last 5"}
-          onToggle={() => setShowRecentOnly(!showRecentOnly)}
-          currentPage={currentPage}
-          totalPages={pageCount}
-          onPageChange={setCurrentPage}
-        />
+      <ControlBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        sortOption={sortBy}
+        setSortOption={setSortBy}
+        sortOptions={[
+          { label: "Newest First", value: "newest" },
+          { label: "Oldest First", value: "oldest" },
+          { label: "Name A-Z", value: "name" },
+        ]}
+        filterValue={filterBy}
+        setFilterValue={setFilterBy}
+        filterOptions={[
+          { label: "All", value: "all" },
+          { label: "Approved", value: "approved" },
+          { label: "Disapproved", value: "disapproved" },
+        ]}
+        toggleLabel={showRecentOnly ? "Show All" : "Show Last 5"}
+        onToggle={() => setShowRecentOnly(!showRecentOnly)}
+        currentPage={currentPage}
+        totalPages={pageCount}
+        onPageChange={setCurrentPage}
+      />
 
-        <div className="history-table-container">
-          {paginated.length === 0 ? (
-            <p className="rh-no-checks-message">🦗 No checks match your filters...</p>
-          ) : (
-            <table className="history-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Date Sent</th>
-                  <th>Api Name</th>
-                  <th>Description</th>
-                  <th>Admin's Notes</th>
-                  <th>Admin's Decision</th>
+        {paginated.length === 0 ? (
+          <div className="history-empty-card">
+            <img
+              src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExem53a3ZhbmdoMGpkNXd0ano5dTA1OWVjdXhhZWIxdWh0dndtemQxeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uDj0Fa3q8ipBS/giphy.gif"
+              alt="No checks history"
+              className="history-empty-image"
+            />
+            <h3>No Checks History</h3>
+            <p>Once your submitted code is reviewed, it will appear here.</p>
+          </div>
+        ) : (
+          <div className="history-table-container">
+          <table className="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Date Sent</th>
+                <th>Api Name</th>
+                <th>Description</th>
+                <th>Admin's Notes</th>
+                <th>Admin's Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.map((request, index) => (
+                <tr key={request._id} className={index % 2 === 0 ? "history-dark-row" : "history-light-row"}>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td>{new Date(request.createdAt).toLocaleString()}</td>
+                  <td>{request.apiCodeId.name}</td>
+                  <td>{request.apiCodeId.description}</td>
+                  <td>{request.adminsNotes || "No notes provided"}</td>
+                  <td>{request.adminsDecision || "No decision provided"}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {paginated.map((request, index) => (
-                  <tr key={request._id} className={index % 2 === 0 ? "history-dark-row" : "history-light-row"}>
-                    <td className="history-number-column">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td>{new Date(request.createdAt).toLocaleString()}</td>
-                    <td>{request.apiCodeId.name}</td>
-                    <td>{request.apiCodeId.description}</td>
-                    <td className="history-admin-notes">{request.adminsNotes || "No notes provided"}</td>
-                    <td className="history-admin-decision">{request.adminsDecision || "No decision provided"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        )}
+    </div>
   );
 };
   

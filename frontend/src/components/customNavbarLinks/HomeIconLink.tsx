@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import apiIcon from '../../../assets/api-icon.png';
 import { useToken } from "../../utils/decodingUtils";
+import '../../globalCss/navbar.css';
 
 const HomeIconLink: React.FC = () => {
     const accessToken: string =  useToken("access")!;

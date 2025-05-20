@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import '../../historyPage.css';
+//import '../../historyPage.css';
 import { useToken, useTokenProperty } from "../../utils/decodingUtils";
 import {toast} from 'react-toastify';
+import './activeRequests.css';
 
 interface RequestData {
   _id: string;
@@ -81,32 +82,33 @@ const ActiveRequests = () => {
   );
 
   return (
-      <div className="main-container">
-        <h1 className="history-header">Active Requests</h1>
-        <p className="ar-message">
+      <div className="active-requests-container">
+        <h1 className="active-requests-header">Active Requests</h1>
+        <p className="active-requests-message">
           The admin is checking your codes. Be patient...
         </p>
 
-        <div className="search-refresh-bar">
-          <input
-            className="ch-search-bar"
-            type="text"
-            placeholder="Search by description or date..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          <div className="refresh-block">
-            <button className="rh-refresh-button" onClick={fetchActiveRequests}>🔄 Refresh</button>
-            <span className="rh-updated-time"> Last updated at: {lastUpdated}</span>
-          </div>
-        </div>
+        <input
+          className="active-requests-search"
+          type="text"
+          placeholder="Search by description or date..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
         {filteredRequests.length === 0 ? (
-          <p className="history-empty-message">📭 No active requests. Stop Joking and Start Coding!</p>
+          <div className="active-requests-empty-card">
+          <img
+            src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWZncTV1N3Q4a3o1N2ZydDI0YmZ2c3cxMGJtenR4bGowOHd5NG1ldCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/8yvdQMhayX1zbMou11/giphy.gif"
+            alt="No active requests"
+            className="active-requests-empty-image"
+          />
+          <h3>No Active Requests</h3>
+          <p>You're all caught up! New activity will show up here automatically.</p>
+        </div>
         ) : (
-          <div className="history-table-container">
-            <table className="history-table">
+          <div className="active-requests-table-container">
+            <table className="active-requests-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -116,8 +118,8 @@ const ActiveRequests = () => {
               </thead>
               <tbody>
                 {filteredRequests.map((request, index) => (
-                  <tr key={request._id} className={index % 2 === 0 ? "history-dark-row" : "history-light-row"}>
-                    <td className="history-number-column">{index + 1}</td>
+                  <tr key={request._id} className={index % 2 === 0 ? "active-requests-dark-row" : "active-requests-light-row"}>
+                    <td className="active-requests-number">{index + 1}</td>
                     <td>{new Date(request.createdAt).toLocaleString()}</td>
                     <td>{request.apiCodeId.description}</td>
                   </tr>

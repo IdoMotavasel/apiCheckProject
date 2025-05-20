@@ -13,6 +13,7 @@ interface RequestData {
   userId: { username:string};
   createdAt: string;
   apiCodeId: { description: string; apiCode: string };
+  mlConfidence?: number;
 }
 
 const WaitingRequests = (): JSX.Element => {
@@ -134,43 +135,50 @@ const WaitingRequests = (): JSX.Element => {
   if (error) return <div>{error}</div>;
 
   return (
-      <div className="wr-container">
-        <h1 className="wr-headline">Waiting Requests</h1>
-        <p className="wr-subtitle">Users are waiting... But don't rush greatness!</p>
+      <div className="waiting-requests-container">
+        <h1 className="waiting-requests-headline">Waiting Requests</h1>
+        <p className="waiting-requests-subtitle">Users are waiting... But don't rush greatness!</p>
 
         <input
-          className="wr-search-bar"
+          className="waiting-requests-search-bar"
           type="text"
           placeholder="Search by user or date..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <div className="wr-chart-header">
-          <button className="wr-refresh-button" onClick={fetchWaitingRequests}>🔄 Refresh</button>
-          <span className="wr-updated-time">Last updated at: {lastUpdated}</span>
-        </div>
-
         {message ? (
-          <div className="wr-message">{message}</div>
+          <div className="waiting-requests-empty-card">
+          <img
+            src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHlxYzVsZnA5dHNhMWU4bjdyZGlnaWV2ZnkyZDdjc2kyd3ZkZjBkbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/h8lqnqav0SM4RzGVp1/giphy.gif"
+            alt="No requests"
+            className="waiting-requests-empty-image"
+          />
+          <h3>No Pending Requests</h3>
+          <p>You're all caught up. New requests will appear here automatically!</p>
+        </div>
         ) : (
-          <table className="wr-table">
+          <table className="waiting-requests-table">
             <thead>
               <tr>
-                <th className="wr-th wr-small">Username</th>
-                <th className="wr-th wr-small">Time</th>
-                <th className="wr-th wr-medium">Description</th>
-                <th className="wr-th wr-large">Code</th>
-                <th className="wr-th wr-medium">Actions</th>
+                <th className="waiting-requests-th waiting-requests-small">Username</th>
+                <th className="waiting-requests-th waiting-requests-small">Time</th>
+                <th className="waiting-requests-th waiting-requests-medium">Description</th>
+                <th className="waiting-requests-th waiting-requests-small">Confidence</th>
+                <th className="waiting-requests-th waiting-requests-large">Code</th>
+                <th className="waiting-requests-th waiting-requests-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredRequests.map((request) => (
-                <tr key={request._id} className={`wr-row ${removingRequestId === request._id ? 'fade-out' : ''}`}>
-                  <td className="wr-td wr-small">{request.userId.username}</td>
-                  <td className="wr-td wr-small">{new Date(request.createdAt).toLocaleString()}</td>
-                  <td className="wr-td wr-medium">{request.apiCodeId.description}</td>
-                  <td className="wr-td wr-large">
+                <tr key={request._id} className={`waiting-requests-row ${removingRequestId === request._id ? 'fade-out' : ''}`}>
+                  <td className="waiting-requests-td waiting-requests-small">{request.userId.username}</td>
+                  <td className="waiting-requests-td waiting-requests-small">{new Date(request.createdAt).toLocaleString()}</td>
+                  <td className="waiting-requests-td waiting-requests-medium">{request.apiCodeId.description}</td>
+                  <td className="waiting-requests-td waiting-requests-small">
+                    {request.mlConfidence !== undefined ? `${(request.mlConfidence * 100).toFixed(1)}%` : '—'}
+                  </td>
+                  <td className="waiting-requests-td waiting-requests-large">
                     <CodeMirror
                       value={request.apiCodeId.apiCode}
                       options={{
@@ -181,19 +189,19 @@ const WaitingRequests = (): JSX.Element => {
                       }}
                     />
                   </td>
-                  <td className="wr-td wr-medium">
+                  <td className="waiting-requests-td waiting-requests-medium">
                     <textarea 
-                    className="wr-notes" 
+                    className="waiting-requests-notes" 
                     placeholder="Add notes..." 
                     value={notesMap[request._id] || ''}
                     onChange={(e) => setNotesMap({ ...notesMap, [request._id]: e.target.value })}
                     />
                     <button 
-                    className="wr-button wr-approve"
+                    className="waiting-requests-button waiting-requests-approve"
                     onClick={() => handleDecision(request._id, 'approved')}
                     >Approve</button>
                     <button 
-                    className="wr-button wr-disapprove"
+                    className="waiting-requests-button waiting-requests-disapprove"
                     onClick={() => handleDecision(request._id, 'disapproved')}
                       >Disapprove</button>
                   </td>

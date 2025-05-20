@@ -4,13 +4,13 @@ import { jwtDecode } from 'jwt-decode';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 
-import Login from './components/Login/Login';
-import Register from './components/register/Register';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import NotFound from './components/notFound/NotFound';
 import Navbar from './components/navbar/Navbar';
 
 //user & admin "shared" pages
-import Home from './components/Home';
+import Home from './components/home/Home';
 
 // admin pages
 import WaitingRequests from './components/adminPages/WaitingRequests';

@@ -1,0 +1,194 @@
+/* -----------------------------
+   Auth.css — Login & Register
+------------------------------*/
+
+/* Container background */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #1f4037, #99f2c8);
+    color: white;
+  }
+  
+  /* Shared title */
+  .auth-title {
+    font-size: 4vh;
+    margin-bottom: 2vh;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Form container */
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+    width: 40vw;
+    max-width: 400px;
+    padding: 3vh;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Input fields */
+  .auth-form input {
+    width: 100%;
+    padding: 1.5vh;
+    font-size: 2vh;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 1vh;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .auth-form input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
+  }
+  
+  .auth-form input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .auth-form label {
+    width: 100%;
+    padding: 1.5vh 0 0.5vh;
+    font-size: 2vh;
+  }
+  
+  /* Buttons */
+  .auth-button {
+    width: 100%;
+    padding: 1.5vh;
+    font-size: 2vh;
+    background: linear-gradient(135deg, #66a68b, #99f2c8);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 1vh;
+  }
+  
+  .auth-button:hover {
+    background: linear-gradient(135deg, #99f2c8, #66a68b);
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Error message */
+  .auth-error {
+    color: #e74c3c;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 2px solid #66a68b;
+    border-radius: 8px;
+    padding: 6px 10px;
+    animation: auth-text-glow 1.5s infinite alternate;
+    width: 100%;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  @keyframes auth-text-glow {
+    from { text-shadow: 0 0 5px #e74c3c; }
+    to   { text-shadow: 0 0 15px #e74c3c; }
+  }
+  
+  /* Role selection */
+  .auth-role-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    width: 100%;
+  }
+  
+  .auth-role-selection label {
+    display: flex;
+    align-items: center;
+    font-size: 2vh;
+    cursor: pointer;
+    padding: 1vh 0;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  .auth-role-selection label:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .auth-role-selection input[type="radio"] {
+    appearance: none;
+    width: 1.1em;
+    height: 1.1em;
+    border: 2px solid white;
+    border-radius: 50%;
+    background: transparent;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .auth-role-selection input[type="radio"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    background-color: black;
+    border-radius: 50%;
+  }
+  
+  /* Password Requirements */
+  .auth-requirements {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  
+  .auth-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .auth-requirements .valid {
+    color: green;
+  }
+  
+  .auth-requirements .invalid {
+    color: red;
+  }
+  
+  /* Username error */
+  .auth-username-error {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #0e3826;
+    margin-top: -0.4rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .auth-form {
+      width: 85vw;
+    }
+    .auth-button {
+      font-size: 1.8vh;
+    }
+    .auth-title {
+      font-size: 3.5vh;
+    }
+  }
+  

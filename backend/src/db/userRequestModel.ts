@@ -7,6 +7,7 @@ export interface UserRequestType extends Document {
     adminsNotes?: string;
     adminsDecision?: "approved" | "disapproved" | null;
     status: "waiting" | "checked";
+    mlConfidence: number;
 }
 
 const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserRequestType>(
@@ -16,6 +17,7 @@ const UserRequestSchema: Schema<UserRequestType>= new mongoose.Schema<UserReques
         adminsNotes: { type: String, default: null },
         adminsDecision: { type: String, enum: ["approved", "disapproved", null], default: null },
         status: { type: String, required: true, enum: ["waiting", "checked"], default: "waiting" },
+        mlConfidence: { type: Number, required: false },
     },
     {
         timestamps: true,

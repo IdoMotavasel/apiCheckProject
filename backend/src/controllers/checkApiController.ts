@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import ApiCode, { ApiCodeType } from '../db/apiCodeModel';
-import { UserRequest, UserRequestType } from '../db/userRequestModel';
+import { UserRequest} from '../db/userRequestModel';
 import UserModel from '../db/userModel';
 import { checkApiRequestBody } from '../types/checkApiTypes';
 import { Params } from '../types/params';
@@ -34,6 +34,7 @@ export const checkApi = async (req: Request<Params, {}, checkApiRequestBody>, re
         }
 
         let isValid: boolean;
+        let confidence: number = -1;
         try {
             const mlRes = await axios.post(
                 FLASK_SERVER_URL,
@@ -41,6 +42,7 @@ export const checkApi = async (req: Request<Params, {}, checkApiRequestBody>, re
                 { timeout: 5000 }
             );
             isValid = mlRes.data.validity === 'valid';
+            confidence = mlRes.data.confidence ?? -1;
         } catch (mlError: any) {
             console.error('Error calling ML service:', mlError.message || mlError);
             res.status(502).json({ message: 'Failed to classify code' });
@@ -57,7 +59,8 @@ export const checkApi = async (req: Request<Params, {}, checkApiRequestBody>, re
             await UserRequest.create({
                 userId,
                 apiCodeId: apiCodeCreated._id,
-                status: "waiting"
+                status: "waiting",
+                mlConfidence: confidence,
             });
 
             const adminId = user.adminId.toString();
@@ -71,6 +74,7 @@ export const checkApi = async (req: Request<Params, {}, checkApiRequestBody>, re
         res.status(200).json({
             message: 'API code processed successfully.',
             validityCheck: isValid ? 'valid' : 'invalid',
+            confidence: confidence
         });
     } catch (error: any) {
         console.error('Error in checkApi:', error);

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import '../../historyPage.css';
 import { useToken, useTokenProperty } from "../../utils/decodingUtils";
 import ControlBar from "../controlBar/ControlBar";
+import '../history.css';
 
 interface RequestData {
   _id: string;
@@ -84,7 +84,7 @@ const RequestHistory = () => {
   }
 
   return (
-      <div className="main-container">
+      <div className="history-container">
         <h1 className="history-header">Requests History</h1>
 
         <ControlBar
@@ -111,10 +111,18 @@ const RequestHistory = () => {
           onPageChange={setCurrentPage}
         />
 
-        <div className="history-table-container">
-          {message ? (
-            <p className="rh-no-checks-message">{message}</p>
-          ) : (
+        {paginated.length === 0 ? (
+          <div className="history-empty-card">
+            <img
+              src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExem53a3ZhbmdoMGpkNXd0ano5dTA1OWVjdXhhZWIxdWh0dndtemQxeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uDj0Fa3q8ipBS/giphy.gif"
+              alt="No request history"
+              className="history-empty-image"
+            />
+            <h3>No Requests History</h3>
+            <p>Once user submissions are reviewed, they will appear here.</p>
+          </div>
+        ) : (
+          <div className="history-table-container">
             <table className="history-table">
               <thead>
                 <tr>
@@ -128,19 +136,28 @@ const RequestHistory = () => {
               </thead>
               <tbody>
                 {paginated.map((request, index) => (
-                  <tr key={request._id} className={index % 2 === 0 ? "history-dark-row" : "history-light-row"}>
-                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <tr
+                    key={request._id}
+                    className={index % 2 === 0 ? "history-dark-row" : "history-light-row"}
+                  >
+                    <td className="history-number-column">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </td>
                     <td>{request.userId.username}</td>
                     <td>{new Date(request.createdAt).toLocaleString()}</td>
                     <td>{request.apiCodeId.description}</td>
-                    <td>{request.adminsNotes || "No notes provided"}</td>
-                    <td>{request.adminsDecision || "No decision provided"}</td>
+                    <td className="history-admin-notes">
+                      {request.adminsNotes || <span>No notes provided</span>}
+                    </td>
+                    <td className="history-admin-decision">
+                      {request.adminsDecision || <span>No decision provided</span>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
           )}
-        </div>
       </div>
   );
 };

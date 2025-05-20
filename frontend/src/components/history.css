@@ -1,0 +1,143 @@
+/* === Shared History Styles === */
+
+/* Container */
+.history-container {
+    width: 90vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2vh 2vw;
+    padding-top: 6vh; /* leave space below navbar */
+    box-sizing: border-box;
+  }
+  
+  /* Headers */
+  .history-header {
+    text-align: center;
+    font-size: 2rem;
+    color: black;
+    margin-bottom: 2vh;
+  }
+  
+  /* Table wrapper */
+  .history-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Table */
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    min-width: 600px;
+    text-align: center;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    color:black;
+  }
+  
+  .history-table th {
+    background-color: #66a68b;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .history-dark-row {
+    background-color: #f8f9fa;
+  }
+  
+  .history-light-row {
+    background-color: #ffffff;
+  }
+  
+  .history-number-column {
+    font-weight: bold;
+    color: #66a68b;
+  }
+  
+  .history-admin-notes,
+  .history-admin-decision {
+    word-break: break-word;
+    max-width: 200px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .history-admin-notes span,
+  .history-admin-decision span {
+    font-style: italic;
+  }
+  
+  .history-empty-card {
+  width: 100%;
+  background: #2b2b2b;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 2rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.history-empty-card h3 {
+  font-size: 1.6rem;
+  color: #66a68b;
+  margin-top: 1rem;
+}
+
+.history-empty-card p {
+  font-size: 1rem;
+  color: #ccc;
+  margin-top: 0.5rem;
+}
+
+.history-empty-image {
+  width: 200px;
+  max-width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .history-table {
+      font-size: 0.9rem;
+    }
+  
+    .history-table th,
+    .history-table td {
+      padding: 0.8rem;
+    }
+  
+    .history-header {
+      font-size: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .history-table th,
+    .history-table td {
+      font-size: 0.8rem;
+      padding: 0.5rem;
+    }
+  
+    .history-container {
+      width: 95vw;
+      padding: 1vh;
+    }
+  
+    .history-header {
+      font-size: 1.2rem;
+    }
+  }
+  

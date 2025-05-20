@@ -1,0 +1,23 @@
+/* === 🏠 Home Page Styling === */
+
+/* Container: Full page, center content */
+.home-container {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Welcome text */
+.home-username {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  color: #66a68b;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 5vh;
+}
+

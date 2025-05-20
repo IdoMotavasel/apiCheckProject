@@ -7,30 +7,34 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { v4 as uuidv4 } from 'uuid';
-import { Socket } from 'socket.io';
 import { AuthenticatedSocket } from '../sockets/socketServer';
 
+// ==========================
+// Run a container from the stored tar
+// ==========================
 export const runContainer = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { apiCodeName, version } = req.body;
+    const { apiCodeName } = req.body;
 
-    if (!apiCodeName || !version) {
+    if (!apiCodeName) {
       res.status(400).json({ message: 'Missing required fields.' });
       return;
     }
 
-    const container = await ContainerModel.findOne({ sanitizedName: apiCodeName, version });
+    // Find container in DB
+    const container = await ContainerModel.findOne({ sanitizedName: apiCodeName });
     if (!container) {
       res.status(404).json({ message: 'Container not found.' });
       return;
     }
 
+    // Create temp dir and save tar
     const tempDir = path.join(os.tmpdir(), `container-${uuidv4()}`);
     fs.mkdirSync(tempDir);
     const tarPath = path.join(tempDir, 'container.tar');
     fs.writeFileSync(tarPath, container.tarData);
 
-    // Extract tar
+    // Extract tar file
     const extractCmd = `tar -xf ${tarPath} -C ${tempDir}`;
     exec(extractCmd, (err) => {
       if (err) {
@@ -39,12 +43,14 @@ export const runContainer = async (req: Request, res: Response): Promise<void> =
         return;
       }
 
+      // Check for Dockerfile existence
       const dockerfilePath = path.join(tempDir, 'Dockerfile');
       if (!fs.existsSync(dockerfilePath)) {
         res.status(400).json({ message: 'Dockerfile not found in tar archive.' });
         return;
       }
 
+      // Read Dockerfile and find exposed port
       const dockerfileContent = fs.readFileSync(dockerfilePath, 'utf-8');
       const exposeMatch = dockerfileContent.match(/EXPOSE\s+(\d+)/i);
       const exposedPort = exposeMatch ? exposeMatch[1] : null;
@@ -54,29 +60,30 @@ export const runContainer = async (req: Request, res: Response): Promise<void> =
         return;
       }
 
-      const imageTag = `${apiCodeName}:${version}`;
-      const containerName = `${apiCodeName}_${version.replace(/\./g, '_')}`;
+      // Build docker image
+      const imageTag = `${apiCodeName}:latest`;
+      const containerName = `${apiCodeName}`;
       const dockerBuildCmd = `docker build -t ${imageTag} ${tempDir}`;
       exec(dockerBuildCmd, (err, stdout, stderr) => {
         if (err) {
           console.error('Docker build failed:', err);
-          res.status(500).json({ message: 'Docker build failed.' });
+          res.status(500).json({ message: 'Docker build failed.', error: stderr });
           return;
         }
 
+        // Remove old container if exists, then run new
         const removeExistingCmd = `docker rm -f ${containerName}`;
         exec(removeExistingCmd, () => {
-            // Now run the new container
-            const dockerRunCmd = `docker run -d -p ${exposedPort}:${exposedPort} --name ${containerName} ${imageTag}`;
-            exec(dockerRunCmd, (err, stdout, stderr) => {
-              if (err) {
-                console.error('Docker run failed:', err);
-                res.status(500).json({ message: 'Docker run failed.' });
-                return;
-              }
-  
-              res.status(200).json({ message: 'Container is running.', containerId: stdout.trim() });
-            });
+          const dockerRunCmd = `docker run -d -p ${exposedPort}:${exposedPort} --name ${containerName} ${imageTag}`;
+          exec(dockerRunCmd, (err, stdout, stderr) => {
+            if (err) {
+              console.error('Docker run failed:', err);
+              res.status(500).json({ message: 'Docker run failed.', forceStop: true });
+              return;
+            }
+
+            res.status(200).json({ message: 'Container is running.', containerId: stdout.trim() });
+          });
         });
       });
     });
@@ -86,17 +93,21 @@ export const runContainer = async (req: Request, res: Response): Promise<void> =
   }
 };
 
+// ==========================
+// Stop a running container
+// ==========================
 export const stopContainer = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { apiCodeName, version } = req.body;
+    const { apiCodeName} = req.body;
 
-    if (!apiCodeName || !version) {
+    if (!apiCodeName) {
       res.status(400).json({ message: 'Missing required fields.' });
       return;
     }
 
-    const containerName = `${apiCodeName}_${version.replace(/\./g, '_')}`;
+    const containerName = `${apiCodeName}`;
 
+    // Check if container is running
     const checkCmd = `docker ps -q --filter name=^/${containerName}$`;
     exec(checkCmd, (err, stdout) => {
       if (err || !stdout.trim()) {
@@ -104,6 +115,7 @@ export const stopContainer = async (req: Request, res: Response): Promise<void> 
         return;
       }
 
+      // Stop the container
       const dockerStopCmd = `docker stop ${containerName}`;
 
       exec(dockerStopCmd, (err2) => {
@@ -122,12 +134,14 @@ export const stopContainer = async (req: Request, res: Response): Promise<void> 
   }
 };
 
+// ==========================
+// Get logs from a container
+// ==========================
 export const getContainerLogs = (req: Request, res: Response): void => {
-  const { apiCodeName, version } = req.body;
+  const { apiCodeName} = req.body;
+  const containerName = `${apiCodeName}`;
 
-  // Normalize the container name to lowercase to match Docker behavior
-  const containerName = `${apiCodeName}_${version.replace(/\./g, '_')}`;
-
+  // Get list of all containers
   exec(`docker ps -a --format "{{.Names}}"`, (err, stdout) => {
     if (err) {
       return res.status(500).json({ message: 'Docker is not available' });
@@ -138,6 +152,7 @@ export const getContainerLogs = (req: Request, res: Response): void => {
       return res.status(404).json({ message: `Container "${containerName}" not found.` });
     }
 
+    // Fetch container logs
     exec(`docker logs ${containerName}`, (logErr, stdout, stderr) => {
       if (logErr) {
         return res.status(500).json({ message: 'Failed to retrieve logs.' });
@@ -148,11 +163,14 @@ export const getContainerLogs = (req: Request, res: Response): void => {
   });
 };
 
-
+// ==========================
+// Execute a command inside a container
+// ==========================
 export const executeInContainer = async (req: Request, res: Response): Promise<void> => {
-  const { apiCodeName, version, command } = req.body;
+  const { apiCodeName, command } = req.body;
 
-  if (!apiCodeName || !version || !command) {
+  // Validate input
+  if (!apiCodeName || !command) {
     res.status(400).json({ message: 'Missing required fields: apiCodeName, version, or command.' });
     return;
   }
@@ -163,10 +181,11 @@ export const executeInContainer = async (req: Request, res: Response): Promise<v
     return;
   }
 
+  // Validate that command is allowed
   const commandParts = trimmedCommand
-    .split(/[\|\;&]+/) // split by | or ; or &
-    .map((part: string) => part.trim().split(' ')[0]) // get first word of each
-    .filter((word: string) => Boolean(word)); // remove empty parts
+    .split(/[\|\;&]+/) 
+    .map((part: string) => part.trim().split(' ')[0]) 
+    .filter((word: string) => Boolean(word)); 
 
     const allAllowed = commandParts.every((cmd: string) => allowedCommands.includes(cmd));
 
@@ -176,13 +195,13 @@ export const executeInContainer = async (req: Request, res: Response): Promise<v
   }
 
   try {
-    const container = await ContainerModel.findOne({ sanitizedName: apiCodeName, version });
+    const container = await ContainerModel.findOne({ sanitizedName: apiCodeName});
     if (!container) {
       res.status(404).json({ message: 'Container not found.' });
       return;
     }
 
-    const containerName = `${apiCodeName}_${version.replace(/\./g, '_')}`;
+    const containerName = `${apiCodeName}`;
 
     // Build the docker exec command
     const dockerExecCmd = `docker exec ${containerName} sh -c ${JSON.stringify(trimmedCommand)}`;
@@ -207,12 +226,13 @@ export const executeInContainer = async (req: Request, res: Response): Promise<v
   }
 };
 
-
-//controllers for sockets
+// ==========================
+// Stream live container logs via WebSocket
+// ==========================
 export const startLogStreaming = (socket: AuthenticatedSocket, containerName: string) => {
   console.log(`Starting log stream for container: ${containerName}`);
 
-  // old logs (past logs)
+  // Send old logs first
   exec(`docker logs ${containerName}`, (error, stdout, stderr) => {
     if (error) {
       console.error('Error fetching old logs:', error.message);
@@ -228,20 +248,24 @@ export const startLogStreaming = (socket: AuthenticatedSocket, containerName: st
   // start following live logs
   const logProcess = spawn('docker', ['logs', '-f', containerName]);
 
+  // Stream stdout logs
   logProcess.stdout.on('data', (data) => {
     socket.emit('containerLogs', { logs: data.toString() });
   });
 
+  // Stream stderr logs (errors)
   logProcess.stderr.on('data', (data) => {
     console.error('Error streaming logs:', data.toString());
     socket.emit('containerLogs', { logs: data.toString() });
   });
 
+  // When container stops
   logProcess.on('close', (code) => {
     console.log(`Stopped streaming logs for container: ${containerName}`);
+    socket.emit('containerStopped', { containerName });
   });
 
-  // Optional: when socket disconnects, clean up
+  // Cleanup if socket disconnects
   socket.on('disconnect', () => {
     console.log('Socket disconnected, stopping log stream');
     logProcess.kill();

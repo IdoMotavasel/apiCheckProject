@@ -4,7 +4,7 @@ import axios from "axios";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { toast } from "react-toastify";
-import "./register.css";
+import "./auth.css";
 
 export default function Register(): JSX.Element {
     const [username, setUsername] = useState<string>("");
@@ -93,9 +93,9 @@ export default function Register(): JSX.Element {
     };
 
     return (
-        <div className="register-container">
-            <h1 className="register-title">Register</h1>
-            <form className="register-form">
+        <div className="auth-container">
+            <h1 className="auth-title">Register</h1>
+            <form className="auth-form">
                 <div className="input-container">
                     <label>Username:</label>
                     <input
@@ -117,8 +117,8 @@ export default function Register(): JSX.Element {
                           }}
                         placeholder="Enter username. 3-20 chars"
                     />
-                    <div className="username-error-container">
-                        {usernameError && <p className="username-error">{usernameError}</p>}
+                    <div className="auth-username-error-container">
+                        {usernameError && <p className="auth-username-error">{usernameError}</p>}
                     </div>
                 </div>
                 <div className="input-container">
@@ -131,15 +131,15 @@ export default function Register(): JSX.Element {
                     />
                 </div>
 
-                <ul className="requirements-list">
-                    <li className="requirement-item">{isLengthValid ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} Minimum 8 characters</li>
-                    <li className="requirement-item">{hasUpperCase ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 uppercase letter</li>
-                    <li className="requirement-item">{hasLowerCase ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 lowercase letter</li>
-                    <li className="requirement-item">{hasNumber ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 number</li>
-                    <li className="requirement-item">{hasSpecialChar ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 special character</li>
+                <ul className="auth-requirements">
+                    <li className="auth-requirement">{isLengthValid ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} Minimum 8 characters</li>
+                    <li className="auth-requirement">{hasUpperCase ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 uppercase letter</li>
+                    <li className="auth-requirement">{hasLowerCase ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 lowercase letter</li>
+                    <li className="auth-requirement">{hasNumber ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 number</li>
+                    <li className="auth-requirement">{hasSpecialChar ? <FaCheck className="icon valid" /> : <FaTimes className="icon invalid" />} At least 1 special character</li>
                 </ul>
 
-                <div className="role-selection">
+                <div className="auth-role-selection">
                     <label>
                     <input
                         type="radio"
@@ -147,7 +147,6 @@ export default function Register(): JSX.Element {
                         value="user"
                         checked={role === "user"}
                         onChange={() => setRole("user")}
-                        className="role-radio"
                     />
                     <span>User</span>
                     </label>
@@ -158,7 +157,6 @@ export default function Register(): JSX.Element {
                         value="admin"
                         checked={role === "admin"}
                         onChange={() => setRole("admin")}
-                        className="role-radio"
                     />
                     <span>Admin</span>
                     </label>
@@ -189,8 +187,8 @@ export default function Register(): JSX.Element {
                 </div>
                 )}
 
-                <button onClick={handleRegister} className="register-button">Register</button>
-                <button onClick={handleLoginRedirect} className="login-redirect-button">Back to login</button>
+                <button onClick={handleRegister} className="auth-button">Register</button>
+                <button onClick={handleLoginRedirect} className="auth-button">Back to login</button>
             </form>
         </div>
     );

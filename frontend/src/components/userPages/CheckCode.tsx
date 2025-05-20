@@ -6,15 +6,20 @@ import './checkCode.css';
 import 'codemirror/theme/yonce.css';
 import axios from 'axios';
 import { useToken, useTokenProperty } from '../../utils/decodingUtils';
+import Spinner from '../spinner/Spinner';
 
 const CheckCode = () => {
   const [validityCheck, setValidityCheck] = useState<string>('');
+  const [confidence, setConfidence] = useState<number | null>(null);
   const [apiCode, setApiCode] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [language, setLanguage] = useState<'javascript' | 'typescript'>('javascript');
   const [error, setError] = useState<string>('');
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingText, setLoadingText] = useState<string>('Sending to machine...');
+
   const accessToken: string = useToken("access")!;
   const userId: string = useTokenProperty("userId");
 
@@ -36,10 +41,14 @@ const CheckCode = () => {
       return;
     }
     setError('');
+    setLoadingText('Sending to machine...');
+    setIsLoading(true);
+    setShowPopup(true);
     try{
       console.log('API Code:', apiCode);
       console.log('name:', name);
       console.log('Description:', description);
+      setLoadingText('Classifying code...');
       const requestBody = {
         description,
         apiCode,
@@ -54,15 +63,15 @@ const CheckCode = () => {
       if(response.status === 200){
         console.log('validity set to:', response.data.validityCheck);
         setValidityCheck(response.data.validityCheck);
-        setShowPopup(true);
+        setConfidence(response.data.confidence);
       } else {
         setValidityCheck('Error occurred');
-        setShowPopup(true);
       }
     }catch(error:any){
       console.error(error);
       setValidityCheck('Error occurred');
-      setShowPopup(true);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -70,71 +79,92 @@ const CheckCode = () => {
     setApiCode('');
     setDescription('');
     setName('');
+    setValidityCheck('');
+    setConfidence(null);
   };
 
   return (
-      <div className="main-container">
-        <div className="check-code-container">
-          <h1 className="check-code-title">Check Code</h1>
-          <p className="check-code-description">Enter you API code here</p>
+      <div className="check-code-container">
+        <h1 className="check-code-title">Check Code</h1>
+        <p className="check-code-description">Enter you API code here</p>
 
-          <div className="check-code-language-selector">
-            <label htmlFor="language">Language:</label>
-            <select
-              id="language"
-              className="check-code-language-dropdown"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as 'javascript' | 'typescript')}
-            >
-              <option value="javascript">JavaScript</option>
-              <option value="typescript">TypeScript</option>
-            </select>
+        <div className="check-code-language-selector">
+          <label htmlFor="language">Language:</label>
+          <select
+            id="language"
+            className="check-code-language-dropdown"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as 'javascript' | 'typescript')}
+          >
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+          </select>
+        </div>
+
+        <div className="check-code-area-container">
+          <div className="check-code-section">
+            <h3 className="check-code-section-title">Main API Code</h3>
+            <CodeMirror
+              className="check-code-textarea"
+              value={apiCode}
+              options={{
+                mode: language === 'typescript' ? 'text/typescript' : 'javascript',
+                lineNumbers: true,
+                theme: 'yonce',
+              }}
+              onChange={(editor,data,value) => {setApiCode(value)}}
+            />
           </div>
 
-          <div className="check-code-area-container">
-            <div className="check-code-section">
-              <h3 className="check-code-section-title">Main API Code</h3>
-              <CodeMirror
-                className="check-code-textarea"
-                value={apiCode}
-                options={{
-                  mode: language === 'typescript' ? 'text/typescript' : 'javascript',
-                  lineNumbers: true,
-                  theme: 'yonce',
-                }}
-                onChange={(editor,data,value) => {setApiCode(value)}}
-              />
-            </div>
+          <textarea
+            className="check-code-description-textarea"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter a Name for the API"
+          />
 
-            <textarea
-              className="check-code-description-textarea"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter a Name for the API"
-            />
+          <textarea
+            className="check-code-description-textarea"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter a description of your API"
+          />
+            <button className="check-code-button" onClick={handleCheckApi}>CHECK API</button>
+        </div>
 
-            <textarea
-              className="check-code-description-textarea"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter a description of your API"
-            />
-              <button className="check-code-button" onClick={handleCheckApi}>CHECK API</button>
-          </div>
+        {error && <p className="check-code-error-message">{error}</p>}
 
-          {error && <p className="check-code-error-message">{error}</p>}
-
-          {showPopup && (
-            <div className={`check-code-popup-container ${validityCheck === 'valid' ? 'check-code-popup-valid' : 'check-code-popup-invalid'}`}>
+        {showPopup && (
+        <div className={`check-code-popup-container ${!isLoading && validityCheck === 'valid' ? 'check-code-popup-valid' : (!isLoading && validityCheck !== 'valid' ? 'check-code-popup-invalid' : '')}`}>
+          {isLoading ? (
+            <Spinner text={loadingText} size="small" />
+          ) : (
+            <>
               <p className="check-code-popup-message">
-                {validityCheck === 'valid' ? 'Valid\nCode sent to admin for final check.' : 'Invalid\nFix your code.'}
+                {validityCheck === 'valid' ? (
+                  <>
+                    Valid<br />
+                    Code sent to admin for final check.<br />
+                  </>
+                ) : (
+                  <>
+                    Invalid<br />
+                    Fix your code.<br />
+                  </>
+                )}
+                {confidence !== null && confidence !== undefined && (
+                  <>
+                    Machine confidence: {confidence}
+                  </>
+                )}
               </p>
               <button className="check-code-popup-close" onClick={() => setShowPopup(false)}>Close</button>
-            </div>
+            </>
           )}
-
-          <button className="check-code-clear-button" onClick={handleClearCode}>Clear Code</button>
         </div>
+      )}
+
+        <button className="check-code-clear-button" onClick={handleClearCode}>Clear Code</button>
       </div>
   );
 };
